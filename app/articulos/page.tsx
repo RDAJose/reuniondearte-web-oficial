@@ -1,4 +1,5 @@
-﻿import Link from "next/link";
+﻿import Image from "next/image";
+import Link from "next/link";
 import { getPublishedArticles } from "@/lib/articles/articles";
 
 export default async function ArticulosPage() {
@@ -15,29 +16,43 @@ export default async function ArticulosPage() {
         revisados, migrados manualmente y ordenados fuera de WordPress.
       </p>
 
-      <div className="mt-10 grid gap-5 md:grid-cols-2">
+      <div className="mt-10 grid gap-6 md:grid-cols-2">
         {articles.map((article) => (
           <article
             key={article.slug}
-            className="rounded-2xl border border-neutral-200 bg-white p-6"
+            className="overflow-hidden rounded-2xl border border-neutral-200 bg-white"
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500">
-              {article.category}
-            </p>
+            {article.coverImage ? (
+              <div className="relative aspect-[16/9] bg-neutral-100">
+                <Image
+                  src={article.coverImage}
+                  alt={article.coverAlt || article.title}
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            ) : null}
 
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight">
-              <Link href={`/articulos/${article.slug}`}>
-                {article.title}
-              </Link>
-            </h2>
+            <div className="p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500">
+                {article.category}
+              </p>
 
-            <p className="mt-4 leading-7 text-neutral-700">
-              {article.excerpt}
-            </p>
+              <h2 className="mt-4 text-2xl font-semibold tracking-tight">
+                <Link href={`/articulos/${article.slug}`}>
+                  {article.title}
+                </Link>
+              </h2>
 
-            <p className="mt-5 text-sm text-neutral-500">
-              {article.publishedAt}
-            </p>
+              <p className="mt-4 leading-7 text-neutral-700">
+                {article.excerpt}
+              </p>
+
+              <p className="mt-5 text-sm text-neutral-500">
+                {article.publishedAt}
+              </p>
+            </div>
           </article>
         ))}
       </div>

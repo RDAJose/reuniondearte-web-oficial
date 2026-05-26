@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getArticleBySlug, getArticleSlugs } from "@/lib/articles/articles";
 
@@ -32,6 +33,26 @@ export default async function ArticleDetailPage({
       </p>
 
       <p className="mt-5 text-sm text-neutral-500">{article.publishedAt}</p>
+
+      {article.coverImage ? (
+        <figure className="mt-10">
+          <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-neutral-100">
+            <Image
+              src={article.coverImage}
+              alt={article.coverAlt || article.title}
+              fill
+              priority
+              sizes="(min-width: 768px) 768px, 100vw"
+              className="object-cover"
+            />
+          </div>
+          {article.coverAlt ? (
+            <figcaption className="mt-3 text-sm text-neutral-500">
+              {article.coverAlt}
+            </figcaption>
+          ) : null}
+        </figure>
+      ) : null}
 
       <div
         className="mt-12 space-y-6 text-lg leading-9 text-neutral-800"
