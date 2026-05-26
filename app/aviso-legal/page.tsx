@@ -7,27 +7,19 @@
 
       <div className="mt-8 space-y-6 leading-8 text-neutral-700">
         <p>
-          Reunión de Arte es una publicación cultural independiente dedicada a la
-          difusión de artículos, crítica, reflexión y contenidos editoriales sobre
-          cine, música, arte, libros y cultura.
+          Reunión de Arte es una publicación cultural independiente dedicada a
+          artículos, crítica y reflexión sobre cine, música, arte, libros y cultura.
         </p>
 
         <h2 className="text-2xl font-semibold text-neutral-950">Titularidad</h2>
-        <p>
-          Titular del sitio web: Jose Luis Olmedo Barrionuevo.
-        </p>
-        <p>
-          Dominio: reuniondearte.com.
-        </p>
-        <p>
-          Contacto: contacto@reuniondearte.com.
-        </p>
+        <p>Titular del sitio web: Jose Luis Olmedo Barrionuevo.</p>
+        <p>Dominio: reuniondearte.com.</p>
+        <p>Contacto: contacto@reuniondearte.com.</p>
 
         <h2 className="text-2xl font-semibold text-neutral-950">Uso del sitio</h2>
         <p>
           El acceso a esta web tiene carácter informativo y cultural. La persona
-          usuaria se compromete a utilizar el sitio de forma lícita, respetuosa y
-          conforme a la normativa aplicable.
+          usuaria se compromete a utilizar el sitio de forma lícita y respetuosa.
         </p>
 
         <h2 className="text-2xl font-semibold text-neutral-950">
@@ -35,9 +27,8 @@
         </h2>
         <p>
           Salvo indicación contraria, los textos publicados en Reunión de Arte son
-          contenidos propios del proyecto. No se permite su reproducción completa
-          sin autorización previa. Las citas breves deberán respetar la autoría y
-          enlazar la fuente original.
+          contenidos propios. No se permite su reproducción completa sin autorización
+          previa. Las citas breves deberán respetar la autoría y enlazar la fuente.
         </p>
 
         <h2 className="text-2xl font-semibold text-neutral-950">
@@ -46,8 +37,7 @@
         <p>
           Las imágenes, capturas, carteles, enlaces o materiales de terceros se
           utilizarán únicamente cuando exista base legítima para su uso editorial,
-          informativo, crítico o documental. Si algún titular de derechos considera
-          que un contenido debe revisarse, puede contactar con el sitio.
+          informativo, crítico o documental.
         </p>
 
         <h2 className="text-2xl font-semibold text-neutral-950">
@@ -56,7 +46,7 @@
         <p>
           Reunión de Arte revisa sus contenidos, pero no garantiza la disponibilidad
           permanente del sitio ni se responsabiliza del contenido de páginas externas
-          enlazadas desde los artículos.
+          enlazadas.
         </p>
       </div>
     </section>

@@ -15,8 +15,8 @@
           Cookies técnicas
         </h2>
         <p>
-          El sitio puede utilizar únicamente elementos técnicos necesarios para su
-          funcionamiento básico, seguridad, carga de páginas o prestación del
+          El sitio puede utilizar únicamente elementos técnicos necesarios para
+          su funcionamiento básico, seguridad, carga de páginas o prestación del
           servicio solicitado por la persona usuaria.
         </p>
 
@@ -26,16 +26,16 @@
         <p>
           Si en el futuro se insertan vídeos, reproductores, mapas, analítica,
           formularios, redes sociales, publicidad o servicios de terceros, podrán
-          generarse cookies externas. En ese caso, esta política deberá actualizarse
-          y, si corresponde, se añadirá un sistema de consentimiento.
+          generarse cookies externas. En ese caso, esta política deberá
+          actualizarse y, si corresponde, se añadirá un sistema de consentimiento.
         </p>
 
         <h2 className="text-2xl font-semibold text-neutral-950">
           Gestión de cookies
         </h2>
         <p>
-          La persona usuaria puede configurar o eliminar cookies desde las opciones
-          de privacidad de su navegador.
+          La persona usuaria puede configurar o eliminar cookies desde las
+          opciones de privacidad de su navegador.
         </p>
 
         <h2 className="text-2xl font-semibold text-neutral-950">
