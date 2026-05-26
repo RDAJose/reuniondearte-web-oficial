@@ -14,7 +14,7 @@
         <h2 className="text-2xl font-semibold text-neutral-950">Titularidad</h2>
         <p>Titular del sitio web: Jose Luis Olmedo Barrionuevo.</p>
         <p>Dominio: reuniondearte.com.</p>
-        <p>Contacto: contacto@reuniondearte.com.</p>
+        <p>Contacto: josele.olmedobarrionuevo@gmail.com.</p>
 
         <h2 className="text-2xl font-semibold text-neutral-950">Uso del sitio</h2>
         <p>
@@ -52,3 +52,4 @@
     </section>
   );
 }
+

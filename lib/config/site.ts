@@ -4,7 +4,7 @@
   description:
     "Revista cultural independiente sobre cine, música, arte, libros y pensamiento visual desde Granada.",
   author: "Jose Luis Olmedo Barrionuevo",
-  email: "contacto@reuniondearte.com",
+  email: "josele.olmedobarrionuevo@gmail.com",
   navItems: [
     { href: "/", label: "Inicio" },
     { href: "/articulos", label: "Artículos" },
@@ -13,3 +13,4 @@
     { href: "/contacto", label: "Contacto" },
   ],
 };
+

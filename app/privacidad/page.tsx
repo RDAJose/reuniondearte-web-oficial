@@ -15,7 +15,7 @@
           Responsable
         </h2>
         <p>Responsable del sitio: Jose Luis Olmedo Barrionuevo.</p>
-        <p>Contacto: contacto@reuniondearte.com.</p>
+        <p>Contacto: josele.olmedobarrionuevo@gmail.com.</p>
 
         <h2 className="text-2xl font-semibold text-neutral-950">
           Datos personales
@@ -71,3 +71,4 @@
     </section>
   );
 }
+
