@@ -5,8 +5,14 @@ import {
   getPublishedArticles,
 } from "@/lib/articles/articles";
 
+const EMPTY_ARTICLES_PLACEHOLDER = "__sin-articulos-publicados__";
+
 export async function generateStaticParams() {
   const articles = await getPublishedArticles();
+
+  if (articles.length === 0) {
+    return [{ slug: EMPTY_ARTICLES_PLACEHOLDER }];
+  }
 
   return articles.map((article) => ({
     slug: article.slug,
@@ -19,6 +25,11 @@ export default async function ArticleDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
+  if (slug === EMPTY_ARTICLES_PLACEHOLDER) {
+    notFound();
+  }
+
   const article = await getArticleBySlug(slug);
 
   if (!article || article.status !== "published") {
@@ -62,7 +73,7 @@ export default async function ArticleDetailPage({
       ) : null}
 
       <div
-        className="mt-12 space-y-6 text-lg leading-9 text-neutral-800"
+        className="article-content mt-12 text-lg leading-9 text-neutral-800"
         dangerouslySetInnerHTML={{ __html: article.contentHtml }}
       />
     </article>
