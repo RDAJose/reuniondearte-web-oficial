@@ -1,10 +1,11 @@
 ﻿export default function SobrePage() {
   return (
-    <section className="mx-auto max-w-4xl px-5 py-16">
-      <h1 className="text-4xl font-semibold tracking-tight text-neutral-950">
+    <section className="mx-auto max-w-4xl px-4 py-12 sm:px-5 sm:py-16">
+      <p className="editorial-kicker">Proyecto editorial</p>
+      <h1 className="mt-3 font-serif text-4xl font-bold text-stone-950 sm:text-5xl">
         Sobre Reunión de Arte
       </h1>
-      <div className="mt-6 space-y-5 leading-8 text-neutral-700">
+      <div className="mt-6 space-y-5 border-t border-stone-300 pt-6 leading-8 text-stone-700">
         <p>
           Reunión de Arte es un proyecto cultural independiente creado para reunir
           artículos sobre cine, música, arte, libros y pensamiento visual.

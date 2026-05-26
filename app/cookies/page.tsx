@@ -1,17 +1,18 @@
 ﻿export default function CookiesPage() {
   return (
-    <section className="mx-auto max-w-4xl px-5 py-16">
-      <h1 className="text-4xl font-semibold tracking-tight text-neutral-950">
+    <section className="mx-auto max-w-4xl px-4 py-12 sm:px-5 sm:py-16">
+      <p className="editorial-kicker">Cookies</p>
+      <h1 className="mt-3 font-serif text-4xl font-bold text-stone-950 sm:text-5xl">
         Política de cookies
       </h1>
 
-      <div className="mt-8 space-y-6 leading-8 text-neutral-700">
+      <div className="mt-8 space-y-6 border-t border-stone-300 pt-6 leading-8 text-stone-700">
         <p>
           Esta web, en su versión inicial, no utiliza cookies propias con fines
           analíticos, publicitarios, de personalización o seguimiento.
         </p>
 
-        <h2 className="text-2xl font-semibold text-neutral-950">
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
           Cookies técnicas
         </h2>
         <p>
@@ -20,7 +21,7 @@
           servicio solicitado por la persona usuaria.
         </p>
 
-        <h2 className="text-2xl font-semibold text-neutral-950">
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
           Servicios externos
         </h2>
         <p>
@@ -30,7 +31,7 @@
           actualizarse y, si corresponde, se añadirá un sistema de consentimiento.
         </p>
 
-        <h2 className="text-2xl font-semibold text-neutral-950">
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
           Gestión de cookies
         </h2>
         <p>
@@ -38,7 +39,7 @@
           opciones de privacidad de su navegador.
         </p>
 
-        <h2 className="text-2xl font-semibold text-neutral-950">
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
           Estado actual
         </h2>
         <p>

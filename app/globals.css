@@ -1,8 +1,12 @@
 ﻿@import "tailwindcss";
 
 :root {
-  --background: #f8f7f3;
+  --background: #fffdf8;
   --foreground: #181713;
+  --paper: #fffdf8;
+  --ink-muted: #5d574d;
+  --line: #d7d0c2;
+  --accent: #8b2418;
 }
 
 * {
@@ -18,9 +22,96 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  text-rendering: optimizeLegibility;
 }
 
 a {
   text-decoration: none;
+}
+
+::selection {
+  background: #eed7b8;
+  color: #181713;
+}
+
+.editorial-kicker {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  border-top: 2px solid #181713;
+  padding-top: 0.55rem;
+}
+
+.section-heading p,
+.section-heading a {
+  color: #181713;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.section-heading a {
+  color: #625c51;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.article-card-placeholder {
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(135deg, rgba(139, 36, 24, 0.08), rgba(24, 23, 19, 0.04)),
+    repeating-linear-gradient(90deg, rgba(24, 23, 19, 0.07) 0 1px, transparent 1px 18px),
+    var(--paper);
+}
+
+.article-card-placeholder span {
+  border: 1px solid rgba(24, 23, 19, 0.16);
+  border-radius: 999px;
+  padding: 0.55rem 0.85rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.article-content {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.article-content > * + * {
+  margin-top: 1.4rem;
+}
+
+.article-content h2 {
+  margin-top: 3rem;
+  color: #181713;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.65rem, 5vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.14;
+}
+
+.article-content p {
+  color: #38342d;
+}
+
+.article-content em {
+  color: #181713;
 }

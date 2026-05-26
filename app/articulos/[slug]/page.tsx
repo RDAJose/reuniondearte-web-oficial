@@ -19,6 +19,38 @@ export async function generateStaticParams() {
   }));
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
+
+  if (!article || article.status !== "published") {
+    return {};
+  }
+
+  return {
+    title: article.title,
+    description: article.excerpt,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      type: "article",
+      publishedTime: article.publishedAt,
+      images: article.coverImage
+        ? [
+            {
+              url: article.coverImage,
+              alt: article.coverAlt || article.title,
+            },
+          ]
+        : undefined,
+    },
+  };
+}
+
 export default async function ArticleDetailPage({
   params,
 }: {
@@ -37,24 +69,24 @@ export default async function ArticleDetailPage({
   }
 
   return (
-    <article className="mx-auto max-w-3xl px-5 py-16">
-      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500">
-        {article.category}
-      </p>
+    <article className="mx-auto max-w-3xl px-4 py-10 sm:px-5 sm:py-14">
+      <div className="border-t-2 border-stone-950 pt-5">
+        <p className="editorial-kicker">{article.category}</p>
 
-      <h1 className="mt-5 text-4xl font-semibold tracking-tight text-neutral-950 md:text-5xl">
-        {article.title}
-      </h1>
+        <h1 className="mt-4 font-serif text-4xl font-bold leading-tight text-stone-950 sm:text-5xl">
+          {article.title}
+        </h1>
 
-      <p className="mt-6 text-lg leading-8 text-neutral-700">
-        {article.excerpt}
-      </p>
+        <p className="mt-6 text-xl leading-8 text-stone-700">{article.excerpt}</p>
 
-      <p className="mt-5 text-sm text-neutral-500">{article.publishedAt}</p>
+        <time className="mt-5 block text-sm font-medium text-stone-500" dateTime={article.publishedAt}>
+          {article.publishedAt}
+        </time>
+      </div>
 
       {article.coverImage ? (
         <figure className="mt-10">
-          <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-neutral-100">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-stone-100 sm:aspect-[16/9]">
             <Image
               src={article.coverImage}
               alt={article.coverAlt || article.title}
@@ -65,7 +97,7 @@ export default async function ArticleDetailPage({
             />
           </div>
           {article.coverAlt ? (
-            <figcaption className="mt-3 text-sm text-neutral-500">
+            <figcaption className="mt-3 text-sm leading-6 text-stone-500">
               {article.coverAlt}
             </figcaption>
           ) : null}
@@ -73,7 +105,7 @@ export default async function ArticleDetailPage({
       ) : null}
 
       <div
-        className="article-content mt-12 text-lg leading-9 text-neutral-800"
+        className="article-content mt-12 text-[1.12rem] leading-8 text-stone-800 sm:text-xl sm:leading-9"
         dangerouslySetInnerHTML={{ __html: article.contentHtml }}
       />
     </article>

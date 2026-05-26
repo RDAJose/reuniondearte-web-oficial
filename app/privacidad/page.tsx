@@ -1,23 +1,24 @@
 ﻿export default function PrivacidadPage() {
   return (
-    <section className="mx-auto max-w-4xl px-5 py-16">
-      <h1 className="text-4xl font-semibold tracking-tight text-neutral-950">
+    <section className="mx-auto max-w-4xl px-4 py-12 sm:px-5 sm:py-16">
+      <p className="editorial-kicker">Privacidad</p>
+      <h1 className="mt-3 font-serif text-4xl font-bold text-stone-950 sm:text-5xl">
         Política de privacidad
       </h1>
 
-      <div className="mt-8 space-y-6 leading-8 text-neutral-700">
+      <div className="mt-8 space-y-6 border-t border-stone-300 pt-6 leading-8 text-stone-700">
         <p>
           Esta política explica cómo se gestionan los datos personales en
           Reunión de Arte.
         </p>
 
-        <h2 className="text-2xl font-semibold text-neutral-950">
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
           Responsable
         </h2>
         <p>Responsable del sitio: Jose Luis Olmedo Barrionuevo.</p>
         <p>Contacto: josele.olmedobarrionuevo@gmail.com.</p>
 
-        <h2 className="text-2xl font-semibold text-neutral-950">
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
           Datos personales
         </h2>
         <p>
@@ -26,7 +27,7 @@
           sistemas de registro.
         </p>
 
-        <h2 className="text-2xl font-semibold text-neutral-950">
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
           Finalidad
         </h2>
         <p>
@@ -34,7 +35,7 @@
           datos facilitados se usarán únicamente para responder a esa comunicación.
         </p>
 
-        <h2 className="text-2xl font-semibold text-neutral-950">
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
           Conservación
         </h2>
         <p>
@@ -42,7 +43,7 @@
           para gestionar la consulta o relación editorial correspondiente.
         </p>
 
-        <h2 className="text-2xl font-semibold text-neutral-950">
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
           Cesiones a terceros
         </h2>
         <p>
@@ -50,7 +51,7 @@
           legal.
         </p>
 
-        <h2 className="text-2xl font-semibold text-neutral-950">
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
           Derechos
         </h2>
         <p>
@@ -59,7 +60,7 @@
           al correo de contacto indicado.
         </p>
 
-        <h2 className="text-2xl font-semibold text-neutral-950">
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
           Cambios futuros
         </h2>
         <p>

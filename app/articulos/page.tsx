@@ -1,71 +1,36 @@
-﻿import Image from "next/image";
-import Link from "next/link";
+import { ArticleCard } from "@/components/articles/ArticleCard";
 import { getPublishedArticles } from "@/lib/articles/articles";
 
 export default async function ArticulosPage() {
   const articles = await getPublishedArticles();
 
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16">
-      <h1 className="text-4xl font-semibold tracking-tight text-neutral-950">
+    <section className="mx-auto max-w-6xl px-4 py-12 sm:px-5 sm:py-16">
+      <p className="editorial-kicker">Archivo editorial</p>
+      <h1 className="mt-3 font-serif text-4xl font-bold text-stone-950 sm:text-5xl">
         Artículos
       </h1>
 
-      <p className="mt-5 max-w-3xl leading-7 text-neutral-700">
+      <p className="mt-5 max-w-3xl text-lg leading-8 text-stone-700">
         Archivo editorial limpio de Reunión de Arte. Solo se publican artículos
         revisados, migrados manualmente y ordenados fuera de WordPress.
       </p>
 
       {articles.length === 0 ? (
-        <div className="mt-10 rounded-2xl border border-neutral-200 bg-white p-8">
-          <h2 className="text-2xl font-semibold tracking-tight text-neutral-950">
+        <div className="mt-10 border-t border-stone-300 bg-[#fffdf8] pt-6">
+          <h2 className="font-serif text-2xl font-bold text-stone-950">
             Archivo en preparación
           </h2>
-          <p className="mt-4 leading-7 text-neutral-700">
+          <p className="mt-4 leading-7 text-stone-700">
             La nueva web oficial está preparada para publicar artículos en
             Markdown con imágenes locales y enlaces. Los textos migrados desde el
             archivo anterior se irán revisando y publicando de forma selectiva.
           </p>
         </div>
       ) : (
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
-          {articles.map((article) => (
-            <article
-              key={article.slug}
-              className="overflow-hidden rounded-2xl border border-neutral-200 bg-white"
-            >
-              {article.coverImage ? (
-                <div className="relative aspect-[16/9] bg-neutral-100">
-                  <Image
-                    src={article.coverImage}
-                    alt={article.coverAlt || article.title}
-                    fill
-                    sizes="(min-width: 768px) 50vw, 100vw"
-                    className="object-cover"
-                  />
-                </div>
-              ) : null}
-
-              <div className="p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500">
-                  {article.category}
-                </p>
-
-                <h2 className="mt-4 text-2xl font-semibold tracking-tight">
-                  <Link href={`/articulos/${article.slug}`}>
-                    {article.title}
-                  </Link>
-                </h2>
-
-                <p className="mt-4 leading-7 text-neutral-700">
-                  {article.excerpt}
-                </p>
-
-                <p className="mt-5 text-sm text-neutral-500">
-                  {article.publishedAt}
-                </p>
-              </div>
-            </article>
+        <div className="mt-10 grid gap-8 md:grid-cols-2">
+          {articles.map((article, index) => (
+            <ArticleCard key={article.slug} article={article} priority={index === 0} />
           ))}
         </div>
       )}

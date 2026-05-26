@@ -1,0 +1,67 @@
+import Image from "next/image";
+import Link from "next/link";
+import type { Article } from "@/lib/articles/types";
+
+type ArticleCardProps = {
+  article: Article;
+  priority?: boolean;
+  variant?: "standard" | "compact";
+};
+
+export function ArticleCard({
+  article,
+  priority = false,
+  variant = "standard",
+}: ArticleCardProps) {
+  const href = `/articulos/${article.slug}`;
+  const isCompact = variant === "compact";
+
+  return (
+    <article className="group border-t border-stone-300 bg-[#fffdf8] pt-4">
+      <Link href={href} className="block" aria-label={article.title}>
+        {article.coverImage ? (
+          <div className="relative aspect-[4/3] overflow-hidden bg-stone-100 sm:aspect-[16/10]">
+            <Image
+              src={article.coverImage}
+              alt={article.coverAlt || article.title}
+              fill
+              priority={priority}
+              sizes="(min-width: 1024px) 520px, (min-width: 768px) 50vw, 100vw"
+              className="object-cover transition duration-500 group-hover:scale-[1.03]"
+            />
+          </div>
+        ) : (
+          <div className="article-card-placeholder aspect-[4/3] sm:aspect-[16/10]">
+            <span>{article.category}</span>
+          </div>
+        )}
+      </Link>
+
+      <div className={isCompact ? "pt-4" : "pt-5"}>
+        <div className="flex flex-wrap items-center gap-3 text-[0.72rem] font-semibold uppercase text-stone-500">
+          <Link href={`/categorias/${article.category}`} className="hover:text-stone-950">
+            {article.category}
+          </Link>
+          <span aria-hidden="true" className="h-px w-8 bg-stone-300" />
+          <time dateTime={article.publishedAt}>{article.publishedAt}</time>
+        </div>
+
+        <h2
+          className={
+            isCompact
+              ? "mt-3 font-serif text-xl font-bold leading-tight text-stone-950"
+              : "mt-3 font-serif text-2xl font-bold leading-tight text-stone-950 sm:text-3xl"
+          }
+        >
+          <Link href={href} className="underline-offset-4 hover:underline">
+            {article.title}
+          </Link>
+        </h2>
+
+        <p className={isCompact ? "mt-3 text-sm leading-6 text-stone-700" : "mt-4 text-base leading-7 text-stone-700"}>
+          {article.excerpt}
+        </p>
+      </div>
+    </article>
+  );
+}

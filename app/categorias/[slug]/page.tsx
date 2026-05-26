@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArticleCard } from "@/components/articles/ArticleCard";
 import {
   articleCategories,
   getCategoryBySlug,
@@ -29,54 +30,37 @@ export default async function CategoryDetailPage({
   );
 
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16">
-      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-neutral-500">
-        Categoría
-      </p>
+    <section className="mx-auto max-w-6xl px-4 py-12 sm:px-5 sm:py-16">
+      <p className="editorial-kicker">Categoría</p>
 
-      <h1 className="mt-4 text-4xl font-semibold tracking-tight text-neutral-950">
+      <h1 className="mt-3 font-serif text-4xl font-bold text-stone-950 sm:text-5xl">
         {category.name}
       </h1>
 
-      <p className="mt-5 max-w-3xl leading-7 text-neutral-700">
+      <p className="mt-5 max-w-3xl text-lg leading-8 text-stone-700">
         {category.description}
       </p>
 
       {articles.length === 0 ? (
-        <div className="mt-10 rounded-2xl border border-neutral-200 bg-white p-8">
-          <h2 className="text-2xl font-semibold tracking-tight text-neutral-950">
+        <div className="mt-10 border-t border-stone-300 bg-[#fffdf8] pt-6">
+          <h2 className="font-serif text-2xl font-bold text-stone-950">
             Archivo en preparación
           </h2>
-          <p className="mt-4 leading-7 text-neutral-700">
+          <p className="mt-4 leading-7 text-stone-700">
             Todavía no hay artículos publicados en esta categoría. Los textos se
             irán incorporando de forma manual, limpia y revisada.
           </p>
           <Link
             href="/articulos"
-            className="mt-6 inline-block rounded-full border border-neutral-300 px-5 py-3 text-sm font-semibold"
+            className="mt-6 inline-block rounded-full border border-stone-300 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:border-stone-500"
           >
             Ver archivo general
           </Link>
         </div>
       ) : (
-        <div className="mt-10 grid gap-5 md:grid-cols-2">
-          {articles.map((article) => (
-            <article
-              key={article.slug}
-              className="rounded-2xl border border-neutral-200 bg-white p-6"
-            >
-              <h2 className="text-2xl font-semibold tracking-tight">
-                <Link href={`/articulos/${article.slug}`}>
-                  {article.title}
-                </Link>
-              </h2>
-              <p className="mt-4 leading-7 text-neutral-700">
-                {article.excerpt}
-              </p>
-              <p className="mt-5 text-sm text-neutral-500">
-                {article.publishedAt}
-              </p>
-            </article>
+        <div className="mt-10 grid gap-8 md:grid-cols-2">
+          {articles.map((article, index) => (
+            <ArticleCard key={article.slug} article={article} priority={index === 0} />
           ))}
         </div>
       )}
