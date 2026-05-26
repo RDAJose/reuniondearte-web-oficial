@@ -1,33 +1,40 @@
 ﻿---
 title: "Título del artículo"
-excerpt: "Resumen breve del artículo para listados, portada y SEO."
+excerpt: "Resumen breve para portada, listado y SEO."
 category: "cine"
 publishedAt: "2026-05-26"
-coverImage: "/media/articles/nombre-del-articulo/cover.webp"
-coverAlt: "Descripción clara de la imagen principal"
+coverImage: ""
+coverAlt: ""
 status: "draft"
 ---
 
 Primer párrafo del artículo.
 
-Puedes escribir texto normal en Markdown.
-
 ## Subtítulo
 
-Más contenido del artículo.
+Texto del artículo.
 
-Puedes añadir enlaces así:
+Enlace externo:
 
-[Texto del enlace](https://ejemplo.com)
+[Texto visible del enlace](https://ejemplo.com)
 
-Puedes añadir imágenes internas así:
+Imagen interna:
 
 ![Descripción de la imagen](/media/articles/nombre-del-articulo/imagen-1.webp)
 
-Para publicar el artículo, cambia:
+Para publicar, cambia:
 
 status: "draft"
 
 por:
 
 status: "published"
+
+Si quieres imagen principal, guarda la imagen en:
+
+public/media/articles/nombre-del-articulo/cover.webp
+
+y cambia:
+
+coverImage: "/media/articles/nombre-del-articulo/cover.webp"
+coverAlt: "Descripción de la imagen principal"
