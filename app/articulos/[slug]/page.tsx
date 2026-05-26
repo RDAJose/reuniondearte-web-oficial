@@ -1,9 +1,16 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getArticleBySlug, getArticleSlugs } from "@/lib/articles/articles";
+import {
+  getArticleBySlug,
+  getPublishedArticles,
+} from "@/lib/articles/articles";
 
-export function generateStaticParams() {
-  return getArticleSlugs().map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  const articles = await getPublishedArticles();
+
+  return articles.map((article) => ({
+    slug: article.slug,
+  }));
 }
 
 export default async function ArticleDetailPage({
