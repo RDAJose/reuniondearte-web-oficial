@@ -5,7 +5,7 @@ category: "cine"
 publishedAt: "2025-01-01"
 coverImage: ""
 coverAlt: ""
-status: "published"
+status: "draft"
 ---
 
 Este es un artículo de prueba para validar la estructura nueva.
