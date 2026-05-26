@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Editor local | Reunión de Arte</title>
+    <link rel="stylesheet" href="/editor.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <p>Editor local</p>
+        <h1>Nuevo artículo</h1>
+        <span>Guarda en draft. No publica, no hace commit y no hace push.</span>
+      </header>
+
+      <form id="article-form" class="editor-form">
+        <section class="panel">
+          <h2>Datos editoriales</h2>
+
+          <label>
+            Título
+            <input name="title" required maxlength="180" autocomplete="off" />
+          </label>
+
+          <label>
+            Excerpt / subtítulo
+            <textarea name="excerpt" required rows="3" maxlength="420"></textarea>
+          </label>
+
+          <div class="grid">
+            <label>
+              Categoría
+              <select name="category" required>
+                <option value="cine">Cine</option>
+                <option value="musica">Música</option>
+                <option value="arte">Arte</option>
+                <option value="libros">Libros</option>
+                <option value="cultura">Cultura</option>
+              </select>
+            </label>
+
+            <label>
+              Fecha
+              <input name="publishedAt" type="date" required />
+            </label>
+
+            <label>
+              Estado
+              <select name="status" required>
+                <option value="draft" selected>draft</option>
+                <option value="published">published</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Imagen principal</h2>
+
+          <label>
+            Archivo opcional
+            <input name="cover" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
+          </label>
+
+          <label>
+            Alt text
+            <input name="coverAlt" maxlength="220" autocomplete="off" />
+          </label>
+
+          <label>
+            Caption opcional
+            <input name="coverCaption" maxlength="260" autocomplete="off" />
+          </label>
+        </section>
+
+        <section class="panel">
+          <h2>Multimedia opcional</h2>
+
+          <label>
+            Enlace externo
+            <input name="externalUrl" type="url" placeholder="https://..." autocomplete="off" />
+          </label>
+
+          <label>
+            Vídeo YouTube/Vimeo
+            <input name="videoUrl" type="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off" />
+          </label>
+        </section>
+
+        <section class="panel">
+          <h2>Cuerpo en Markdown</h2>
+          <label>
+            Markdown
+            <textarea name="body" required rows="18" spellcheck="true"></textarea>
+          </label>
+        </section>
+
+        <div class="actions">
+          <button type="submit">Guardar artículo</button>
+          <p id="status-message" role="status"></p>
+        </div>
+      </form>
+    </main>
+
+    <script src="/editor.js" type="module"></script>
+  </body>
+</html>
