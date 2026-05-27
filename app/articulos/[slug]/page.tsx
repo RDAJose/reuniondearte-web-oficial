@@ -96,7 +96,15 @@ export default async function ArticleDetailPage({
               className="object-cover"
             />
           </div>
-          {article.coverAlt ? (
+          {article.coverCaption || article.coverCredit ? (
+            <figcaption className="mt-3 text-sm leading-6 text-stone-500">
+              {article.coverCaption}
+              {article.coverCaption && article.coverCredit ? " " : null}
+              {article.coverCredit ? (
+                <span className="font-medium">{article.coverCredit}</span>
+              ) : null}
+            </figcaption>
+          ) : article.coverAlt ? (
             <figcaption className="mt-3 text-sm leading-6 text-stone-500">
               {article.coverAlt}
             </figcaption>

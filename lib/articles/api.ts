@@ -7,6 +7,10 @@ type ApiArticleSummary = {
   slug?: string;
   excerpt?: string | null;
   category?: string | null;
+  coverImage?: string | null;
+  coverAlt?: string | null;
+  coverCaption?: string | null;
+  coverCredit?: string | null;
   coverImageUrl?: string | null;
   coverAltText?: string | null;
   publishedAt?: string | null;
@@ -107,8 +111,10 @@ function mapApiArticleSummary(item: ApiArticleSummary): Article | null {
     excerpt: item.excerpt ?? "",
     category: mapCategorySlug(item.category),
     publishedAt: item.publishedAt ?? "",
-    coverImage: item.coverImageUrl ?? undefined,
-    coverAlt: item.coverAltText ?? undefined,
+    coverImage: item.coverImage ?? item.coverImageUrl ?? undefined,
+    coverAlt: item.coverAlt ?? item.coverAltText ?? undefined,
+    coverCaption: item.coverCaption ?? undefined,
+    coverCredit: item.coverCredit ?? undefined,
     status: "published",
     contentHtml: "",
   };

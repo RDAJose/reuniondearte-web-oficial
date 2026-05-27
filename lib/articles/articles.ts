@@ -20,6 +20,8 @@ type ArticleFrontmatter = {
   publishedAt?: string;
   coverImage?: string;
   coverAlt?: string;
+  coverCaption?: string;
+  coverCredit?: string;
   status?: "published" | "draft";
 };
 
@@ -79,6 +81,8 @@ async function getMarkdownArticleBySlug(slug: string): Promise<Article | null> {
     publishedAt: frontmatter.publishedAt,
     coverImage: frontmatter.coverImage,
     coverAlt: frontmatter.coverAlt,
+    coverCaption: frontmatter.coverCaption,
+    coverCredit: frontmatter.coverCredit,
     status: frontmatter.status ?? "draft",
     contentHtml: processedContent.toString(),
   };
