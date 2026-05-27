@@ -4,6 +4,12 @@ import matter from "gray-matter";
 import { remark } from "remark";
 import html from "remark-html";
 import type { Article, ArticleCategory } from "./types";
+import {
+  getApiArticleBySlug,
+  getApiPublishedArticles,
+  getApiPublishedArticlesByCategory,
+  shouldUseApiContent,
+} from "./api";
 
 const articlesDirectory = path.join(process.cwd(), "content", "articles");
 
@@ -29,6 +35,21 @@ export function getArticleSlugs() {
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
+  if (shouldUseApiContent()) {
+    try {
+      const article = await getApiArticleBySlug(slug);
+      if (article) {
+        return article;
+      }
+    } catch {
+      // Keep the static Markdown site working when the local API is unavailable.
+    }
+  }
+
+  return getMarkdownArticleBySlug(slug);
+}
+
+async function getMarkdownArticleBySlug(slug: string): Promise<Article | null> {
   const fullPath = path.join(articlesDirectory, slug, "index.md");
 
   if (!fs.existsSync(fullPath)) {
@@ -64,8 +85,34 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 }
 
 export async function getPublishedArticles() {
+  if (shouldUseApiContent()) {
+    try {
+      return await getApiPublishedArticles();
+    } catch {
+      // Fall back to Markdown so GitHub Pages builds remain independent of the API.
+    }
+  }
+
+  return getMarkdownPublishedArticles();
+}
+
+export async function getPublishedArticlesByCategory(category: ArticleCategory) {
+  if (shouldUseApiContent()) {
+    try {
+      return await getApiPublishedArticlesByCategory(category);
+    } catch {
+      // Fall back to filtering Markdown articles if the API is offline.
+    }
+  }
+
+  return (await getMarkdownPublishedArticles()).filter(
+    (article) => article.category === category,
+  );
+}
+
+async function getMarkdownPublishedArticles() {
   const articles = await Promise.all(
-    getArticleSlugs().map((slug) => getArticleBySlug(slug)),
+    getArticleSlugs().map((slug) => getMarkdownArticleBySlug(slug)),
   );
 
   return articles

@@ -1,5 +1,5 @@
-﻿import type { MetadataRoute } from "next";
-import { articleCategories } from "@/lib/articles/categories";
+import type { MetadataRoute } from "next";
+import { getArticleCategories } from "@/lib/articles/categories";
 import { getPublishedArticles } from "@/lib/articles/articles";
 import { siteConfig } from "@/lib/config/site";
 
@@ -9,6 +9,7 @@ function url(path: string) {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articles = await getPublishedArticles();
+  const categories = await getArticleCategories();
 
   const staticRoutes: MetadataRoute.Sitemap = [
     "",
@@ -24,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
   }));
 
-  const categoryRoutes: MetadataRoute.Sitemap = articleCategories.map((category) => ({
+  const categoryRoutes: MetadataRoute.Sitemap = categories.map((category) => ({
     url: url(`/categorias/${category.slug}/`),
     lastModified: new Date(),
   }));

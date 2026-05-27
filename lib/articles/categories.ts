@@ -1,4 +1,5 @@
-﻿import type { ArticleCategory } from "./types";
+import { getApiCategories, shouldUseApiContent } from "./api";
+import type { ArticleCategory } from "./types";
 
 export const articleCategories: {
   slug: ArticleCategory;
@@ -34,4 +35,24 @@ export const articleCategories: {
 
 export function getCategoryBySlug(slug: string) {
   return articleCategories.find((category) => category.slug === slug) ?? null;
+}
+
+export async function getArticleCategories() {
+  if (shouldUseApiContent()) {
+    try {
+      const categories = await getApiCategories();
+      if (categories.length > 0) {
+        return categories;
+      }
+    } catch {
+      // Markdown categories keep static exports working when the API is offline.
+    }
+  }
+
+  return articleCategories;
+}
+
+export async function getContentCategoryBySlug(slug: string) {
+  const categories = await getArticleCategories();
+  return categories.find((category) => category.slug === slug) ?? null;
 }
