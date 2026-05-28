@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArticleAuthorBox } from "@/components/articles/ArticleAuthorBox";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ArticleMarkdown } from "@/components/articles/ArticleMarkdown";
+import { ArticleShare } from "@/components/articles/ArticleShare";
 import {
   getArticleBySlug,
   getPublishedArticles,
@@ -15,6 +16,7 @@ import {
   getArticleImageCaption,
   getArticleImageCredit,
 } from "@/lib/articles/media";
+import { siteConfig } from "@/lib/config/site";
 
 const EMPTY_ARTICLES_PLACEHOLDER = "__sin-articulos-publicados__";
 
@@ -91,6 +93,7 @@ export default async function ArticleDetailPage({
   const relatedArticles = (await getPublishedArticles())
     .filter((item) => item.slug !== article.slug)
     .slice(0, 3);
+  const articleUrl = new URL(`/articulos/${article.slug}/`, siteConfig.url).toString();
 
   return (
     <main className="article-detail">
@@ -139,6 +142,8 @@ export default async function ArticleDetailPage({
           <ArticleAuthorBox publishedAt={article.publishedAt} />
 
           <ArticleMarkdown>{article.contentMarkdown}</ArticleMarkdown>
+
+          <ArticleShare title={article.title} url={articleUrl} />
         </div>
       </article>
 

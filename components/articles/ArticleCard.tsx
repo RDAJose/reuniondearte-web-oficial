@@ -23,8 +23,8 @@ export function ArticleCard({
 
   return (
     <article className="group min-w-0 border-t border-stone-300 bg-[#fffdf8] pt-4">
-      <Link href={href} className="block" aria-label={article.title}>
-        {image ? (
+      {image ? (
+        <Link href={href} className="block" aria-label={article.title}>
           <div className="relative aspect-[4/3] w-full min-w-0 overflow-hidden bg-stone-100 sm:aspect-[16/10]">
             <Image
               src={image}
@@ -35,12 +35,8 @@ export function ArticleCard({
               className="object-cover transition duration-500 group-hover:scale-[1.03]"
             />
           </div>
-        ) : (
-          <div className="article-card-placeholder aspect-[4/3] w-full min-w-0 sm:aspect-[16/10]">
-            <span>{article.category}</span>
-          </div>
-        )}
-      </Link>
+        </Link>
+      ) : null}
 
       <div className={isCompact ? "min-w-0 pt-4" : "min-w-0 pt-5"}>
         <div className="flex flex-wrap items-center gap-3 text-[0.72rem] font-semibold uppercase text-stone-500">

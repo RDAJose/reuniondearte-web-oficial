@@ -59,7 +59,13 @@ export default async function Home() {
           </div>
 
           {leadArticle ? (
-            <article className="grid min-w-0 grid-cols-1 gap-6 border-b border-stone-300 pb-8 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+            <article
+              className={
+                leadImage
+                  ? "grid min-w-0 grid-cols-1 gap-6 border-b border-stone-300 pb-8 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]"
+                  : "border-b border-stone-300 pb-8"
+              }
+            >
               {leadImage ? (
                 <Link
                   href={`/articulos/${leadArticle.slug}`}
@@ -75,15 +81,7 @@ export default async function Home() {
                     className="object-cover"
                   />
                 </Link>
-              ) : (
-                <Link
-                  href={`/articulos/${leadArticle.slug}`}
-                  className="article-card-placeholder aspect-[4/3] w-full min-w-0 md:order-2"
-                  aria-label={leadArticle.title}
-                >
-                  <span>{leadArticle.category}</span>
-                </Link>
-              )}
+              ) : null}
 
               <div className="min-w-0 md:order-1">
                 <p className="editorial-kicker">{leadArticle.category}</p>
