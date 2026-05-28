@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import { getPublishedArticles } from "@/lib/articles/articles";
+import { formatArticleDate } from "@/lib/articles/dates";
+import { getArticleImage, getArticleImageAlt } from "@/lib/articles/media";
 
 const featuredSections = [
   {
@@ -30,6 +32,10 @@ export default async function Home() {
   const latestArticles = await getPublishedArticles();
   const leadArticle = latestArticles[0];
   const secondaryArticles = latestArticles.slice(1, 4);
+  const articleFeed = latestArticles.slice(1, 10);
+  const leadImage = leadArticle ? getArticleImage(leadArticle) : undefined;
+  const leadImageAlt = leadArticle ? getArticleImageAlt(leadArticle) : "";
+  const leadDate = leadArticle ? formatArticleDate(leadArticle.publishedAt) : "";
 
   return (
     <div className="bg-[#fffdf8]">
@@ -54,15 +60,15 @@ export default async function Home() {
 
           {leadArticle ? (
             <article className="grid gap-6 border-b border-stone-300 pb-8 md:grid-cols-[1.05fr_0.95fr]">
-              {leadArticle.coverImage ? (
+              {leadImage ? (
                 <Link
                   href={`/articulos/${leadArticle.slug}`}
                   className="relative aspect-[4/3] overflow-hidden bg-stone-100 md:order-2"
                   aria-label={leadArticle.title}
                 >
                   <Image
-                    src={leadArticle.coverImage}
-                    alt={leadArticle.coverAlt || leadArticle.title}
+                    src={leadImage}
+                    alt={leadImageAlt}
                     fill
                     priority
                     sizes="(min-width: 1024px) 520px, 100vw"
@@ -89,15 +95,19 @@ export default async function Home() {
                     {leadArticle.title}
                   </Link>
                 </h2>
-                <p className="mt-5 text-lg leading-8 text-stone-700">
-                  {leadArticle.excerpt}
-                </p>
-                <time
-                  className="mt-5 block text-sm font-medium text-stone-500"
-                  dateTime={leadArticle.publishedAt}
-                >
-                  {leadArticle.publishedAt}
-                </time>
+                {leadArticle.excerpt ? (
+                  <p className="mt-5 text-lg leading-8 text-stone-700">
+                    {leadArticle.excerpt}
+                  </p>
+                ) : null}
+                {leadDate ? (
+                  <time
+                    className="mt-5 block text-sm font-medium uppercase tracking-[0.04em] text-stone-500"
+                    dateTime={leadArticle.publishedAt}
+                  >
+                    {leadDate}
+                  </time>
+                ) : null}
               </div>
             </article>
           ) : (
@@ -165,16 +175,28 @@ export default async function Home() {
           <Link href="/articulos">Todo el archivo</Link>
         </div>
 
-        {latestArticles.length > 0 ? (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {latestArticles.map((article, index) => (
+        {articleFeed.length > 0 ? (
+          <div className="home-article-flow">
+            {articleFeed.map((article) => (
               <ArticleCard
                 key={article.slug}
                 article={article}
-                priority={index === 0}
                 variant="compact"
               />
             ))}
+          </div>
+        ) : leadArticle ? (
+          <div className="border-t border-stone-300 pt-5">
+            <p className="max-w-3xl leading-7 text-stone-700">
+              La portada ira incorporando nuevas entradas publicadas desde el
+              archivo editorial.
+            </p>
+            <Link
+              href="/articulos"
+              className="mt-4 inline-block text-sm font-semibold text-stone-950 underline underline-offset-4"
+            >
+              Ver articulos publicados
+            </Link>
           </div>
         ) : (
           <div className="border-t border-stone-300 pt-5">

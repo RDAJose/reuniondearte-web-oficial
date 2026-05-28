@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { formatArticleDate } from "@/lib/articles/dates";
 import { getArticleImage, getArticleImageAlt } from "@/lib/articles/media";
 import type { Article } from "@/lib/articles/types";
 
@@ -18,6 +19,7 @@ export function ArticleCard({
   const isCompact = variant === "compact";
   const image = getArticleImage(article);
   const imageAlt = getArticleImageAlt(article);
+  const readableDate = formatArticleDate(article.publishedAt);
 
   return (
     <article className="group border-t border-stone-300 bg-[#fffdf8] pt-4">
@@ -46,7 +48,7 @@ export function ArticleCard({
             {article.category}
           </Link>
           <span aria-hidden="true" className="h-px w-8 bg-stone-300" />
-          <time dateTime={article.publishedAt}>{article.publishedAt}</time>
+          {readableDate ? <time dateTime={article.publishedAt}>{readableDate}</time> : null}
         </div>
 
         <h2
@@ -61,9 +63,11 @@ export function ArticleCard({
           </Link>
         </h2>
 
-        <p className={isCompact ? "mt-3 text-sm leading-6 text-stone-700" : "mt-4 text-base leading-7 text-stone-700"}>
-          {article.excerpt}
-        </p>
+        {article.excerpt ? (
+          <p className={isCompact ? "mt-3 text-sm leading-6 text-stone-700" : "mt-4 text-base leading-7 text-stone-700"}>
+            {article.excerpt}
+          </p>
+        ) : null}
       </div>
     </article>
   );
