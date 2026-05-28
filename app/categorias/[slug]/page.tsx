@@ -31,7 +31,7 @@ export default async function CategoryDetailPage({
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-12 sm:px-5 sm:py-16">
-      <p className="editorial-kicker">CategorÃ­a</p>
+      <p className="editorial-kicker">Categoría</p>
 
       <h1 className="mt-3 font-serif text-4xl font-bold text-stone-950 sm:text-5xl">
         {category.name}
@@ -44,11 +44,11 @@ export default async function CategoryDetailPage({
       {articles.length === 0 ? (
         <div className="mt-10 border-t border-stone-300 bg-[#fffdf8] pt-6">
           <h2 className="font-serif text-2xl font-bold text-stone-950">
-            Archivo en preparaciÃ³n
+            Archivo en preparación
           </h2>
           <p className="mt-4 leading-7 text-stone-700">
-            TodavÃ­a no hay artÃ­culos publicados en esta categorÃ­a. Los textos se
-            irÃ¡n incorporando de forma manual, limpia y revisada.
+            Todavía no hay artículos publicados en esta categoría. Los textos se
+            irán incorporando de forma manual, limpia y revisada.
           </p>
           <Link
             href="/articulos"

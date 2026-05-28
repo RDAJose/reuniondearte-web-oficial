@@ -8,12 +8,12 @@ export default async function CategoriasPage() {
     <section className="mx-auto max-w-6xl px-4 py-12 sm:px-5 sm:py-16">
       <p className="editorial-kicker">Mapa editorial</p>
       <h1 className="mt-3 font-serif text-4xl font-bold text-stone-950 sm:text-5xl">
-        CategorÃ­as
+        Categorías
       </h1>
 
       <p className="mt-5 max-w-3xl text-lg leading-8 text-stone-700">
-        Archivo editorial organizado por Ã¡reas culturales. Cada categorÃ­a reÃºne
-        artÃ­culos publicados y revisados manualmente.
+        Archivo editorial organizado por áreas culturales. Cada categoría reúne
+        artículos publicados y revisados manualmente.
       </p>
 
       <div className="mt-10 grid gap-x-8 gap-y-6 md:grid-cols-2">
