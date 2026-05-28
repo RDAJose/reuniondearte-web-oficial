@@ -1,10 +1,12 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { ArticleAuthorBox } from "@/components/articles/ArticleAuthorBox";
 import { ArticleMarkdown } from "@/components/articles/ArticleMarkdown";
 import {
   getArticleBySlug,
   getPublishedArticles,
 } from "@/lib/articles/articles";
+import { articleAuthor } from "@/lib/articles/author";
 import type { Article } from "@/lib/articles/types";
 
 const EMPTY_ARTICLES_PLACEHOLDER = "__sin-articulos-publicados__";
@@ -71,11 +73,13 @@ export async function generateMetadata({
   return {
     title: article.title,
     description: article.excerpt,
+    authors: [{ name: articleAuthor.name }],
     openGraph: {
       title: article.title,
       description: article.excerpt,
       type: "article",
       publishedTime: article.publishedAt,
+      authors: [articleAuthor.name],
       images: coverImage
         ? [
             {
@@ -149,6 +153,8 @@ export default async function ArticleDetailPage({
           ) : null}
         </figure>
       ) : null}
+
+      <ArticleAuthorBox publishedAt={article.publishedAt} />
 
       <ArticleMarkdown>{article.contentMarkdown}</ArticleMarkdown>
     </article>
