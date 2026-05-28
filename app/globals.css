@@ -141,6 +141,107 @@ a {
   color: #181713;
 }
 
+.article-inline-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin: 2.25rem auto;
+  border-radius: 0.65rem;
+  box-shadow: 0 1rem 2.5rem rgba(24, 23, 19, 0.08);
+}
+
+.article-embed {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  margin: 2.25rem 0;
+  border: 1px solid rgba(24, 23, 19, 0.12);
+  border-radius: 0.75rem;
+  background: #181713;
+}
+
+.article-embed::before {
+  display: block;
+  padding-top: 56.25%;
+  content: "";
+}
+
+.article-embed[data-aspect="audio"]::before {
+  padding-top: 30%;
+}
+
+.article-embed[data-aspect="normal"]::before {
+  padding-top: min(100%, 24rem);
+}
+
+.article-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.article-embed span {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.9);
+  padding: 0.25rem 0.55rem;
+  color: #38342d;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.article-link-card {
+  display: grid;
+  gap: 0.35rem;
+  margin: 2rem 0;
+  border: 1px solid rgba(24, 23, 19, 0.15);
+  border-radius: 0.75rem;
+  background: rgba(255, 253, 248, 0.72);
+  padding: 1rem;
+  color: #181713;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  text-decoration: none;
+}
+
+.article-content .article-link-card {
+  color: #181713;
+  text-decoration: none;
+}
+
+.article-link-card:hover {
+  border-color: rgba(139, 36, 24, 0.45);
+  background: #fffaf0;
+}
+
+.article-link-card__label {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.article-link-card__domain {
+  color: #181713;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.article-link-card__url {
+  overflow-wrap: anywhere;
+  color: #625c51;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
 .article-content ul,
 .article-content ol {
   padding-left: 1.45em;
@@ -166,4 +267,26 @@ a {
 
 .article-content blockquote p {
   color: inherit;
+}
+
+@media (max-width: 640px) {
+  .article-inline-image,
+  .article-embed,
+  .article-link-card {
+    margin-right: -0.25rem;
+    margin-left: -0.25rem;
+  }
+
+  .article-inline-image,
+  .article-embed {
+    border-radius: 0.55rem;
+  }
+
+  .article-embed[data-aspect="audio"]::before {
+    padding-top: 48%;
+  }
+
+  .article-embed[data-aspect="normal"]::before {
+    padding-top: 120%;
+  }
 }
