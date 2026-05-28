@@ -1,5 +1,3 @@
-import { remark } from "remark";
-import html from "remark-html";
 import type { Article, ArticleCategory } from "./types";
 
 type ApiArticleSummary = {
@@ -19,6 +17,7 @@ type ApiArticleSummary = {
 type ApiArticleDetail = ApiArticleSummary & {
   contentHtml?: string | null;
   contentMarkdown?: string | null;
+  content?: string | null;
 };
 
 export type ApiCategory = {
@@ -116,7 +115,7 @@ function mapApiArticleSummary(item: ApiArticleSummary): Article | null {
     coverCaption: item.coverCaption ?? undefined,
     coverCredit: item.coverCredit ?? undefined,
     status: "published",
-    contentHtml: "",
+    contentMarkdown: "",
   };
 }
 
@@ -126,15 +125,9 @@ async function mapApiArticleDetail(item: ApiArticleDetail): Promise<Article | nu
     return null;
   }
 
-  const contentHtml =
-    item.contentHtml ??
-    (item.contentMarkdown
-      ? (await remark().use(html).process(item.contentMarkdown)).toString()
-      : "");
-
   return {
     ...summary,
-    contentHtml,
+    contentMarkdown: item.contentMarkdown ?? item.content ?? "",
   };
 }
 

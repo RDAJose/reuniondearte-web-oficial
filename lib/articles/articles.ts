@@ -1,8 +1,6 @@
 ﻿import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { remark } from "remark";
-import html from "remark-html";
 import type { Article, ArticleCategory } from "./types";
 import {
   getApiArticleBySlug,
@@ -71,8 +69,6 @@ async function getMarkdownArticleBySlug(slug: string): Promise<Article | null> {
     throw new Error(`Article "${slug}" is missing required frontmatter.`);
   }
 
-  const processedContent = await remark().use(html).process(content);
-
   return {
     slug,
     title: frontmatter.title,
@@ -84,7 +80,7 @@ async function getMarkdownArticleBySlug(slug: string): Promise<Article | null> {
     coverCaption: frontmatter.coverCaption,
     coverCredit: frontmatter.coverCredit,
     status: frontmatter.status ?? "draft",
-    contentHtml: processedContent.toString(),
+    contentMarkdown: content,
   };
 }
 

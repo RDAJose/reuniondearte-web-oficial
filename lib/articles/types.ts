@@ -11,5 +11,5 @@ export type Article = {
   coverCaption?: string;
   coverCredit?: string;
   status: "published" | "draft";
-  contentHtml: string;
+  contentMarkdown: string;
 };

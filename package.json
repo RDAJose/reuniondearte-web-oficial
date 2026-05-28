@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "editor": "node scripts/article-editor/server.mjs",
+    "check:encoding": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-encoding.ps1",
+    "check:all": "npm run check:encoding && npm run lint && npm run build",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -14,7 +16,9 @@
     "next": "16.2.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-markdown": "^10.1.0",
     "remark": "^15.0.1",
+    "remark-gfm": "^4.0.1",
     "remark-html": "^16.0.1"
   },
   "devDependencies": {

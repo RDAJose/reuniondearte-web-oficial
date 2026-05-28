@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { ArticleMarkdown } from "@/components/articles/ArticleMarkdown";
 import {
   getArticleBySlug,
   getPublishedArticles,
@@ -112,10 +113,7 @@ export default async function ArticleDetailPage({
         </figure>
       ) : null}
 
-      <div
-        className="article-content mt-12 text-[1.12rem] leading-8 text-stone-800 sm:text-xl sm:leading-9"
-        dangerouslySetInnerHTML={{ __html: article.contentHtml }}
-      />
+      <ArticleMarkdown>{article.contentMarkdown}</ArticleMarkdown>
     </article>
   );
 }
