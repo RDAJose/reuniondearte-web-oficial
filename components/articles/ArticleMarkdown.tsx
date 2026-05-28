@@ -91,7 +91,7 @@ const markdownComponents: Components = {
 
 export function ArticleMarkdown({ children }: ArticleMarkdownProps) {
   return (
-    <div className="article-content mt-12 text-[1.12rem] leading-8 text-stone-800 sm:text-xl sm:leading-9">
+    <div className="article-content">
       <ReactMarkdown
         components={markdownComponents}
         remarkPlugins={[remarkGfm]}

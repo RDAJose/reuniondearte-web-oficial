@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getArticleImage, getArticleImageAlt } from "@/lib/articles/media";
 import type { Article } from "@/lib/articles/types";
 
 type ArticleCardProps = {
@@ -15,15 +16,17 @@ export function ArticleCard({
 }: ArticleCardProps) {
   const href = `/articulos/${article.slug}`;
   const isCompact = variant === "compact";
+  const image = getArticleImage(article);
+  const imageAlt = getArticleImageAlt(article);
 
   return (
     <article className="group border-t border-stone-300 bg-[#fffdf8] pt-4">
       <Link href={href} className="block" aria-label={article.title}>
-        {article.coverImage ? (
+        {image ? (
           <div className="relative aspect-[4/3] overflow-hidden bg-stone-100 sm:aspect-[16/10]">
             <Image
-              src={article.coverImage}
-              alt={article.coverAlt || article.title}
+              src={image}
+              alt={imageAlt}
               fill
               priority={priority}
               sizes="(min-width: 1024px) 520px, (min-width: 768px) 50vw, 100vw"

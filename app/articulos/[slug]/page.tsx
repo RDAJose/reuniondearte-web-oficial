@@ -1,47 +1,22 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleAuthorBox } from "@/components/articles/ArticleAuthorBox";
+import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ArticleMarkdown } from "@/components/articles/ArticleMarkdown";
 import {
   getArticleBySlug,
   getPublishedArticles,
 } from "@/lib/articles/articles";
 import { articleAuthor } from "@/lib/articles/author";
-import type { Article } from "@/lib/articles/types";
+import {
+  getArticleImage,
+  getArticleImageAlt,
+  getArticleImageCaption,
+  getArticleImageCredit,
+} from "@/lib/articles/media";
 
 const EMPTY_ARTICLES_PLACEHOLDER = "__sin-articulos-publicados__";
-
-function firstPresent(...values: Array<string | null | undefined>) {
-  return values.find((value) => value && value.trim().length > 0);
-}
-
-function getArticleImage(article: Article) {
-  return firstPresent(
-    article.featuredMedia?.publicUrl,
-    article.coverImageUrl,
-    article.coverImage,
-    article.featuredImageUrl,
-    article.thumbnailImageUrl,
-  );
-}
-
-function getArticleImageAlt(article: Article) {
-  return (
-    firstPresent(
-      article.featuredMedia?.altText,
-      article.coverAltText,
-      article.coverAlt,
-    ) ?? article.title
-  );
-}
-
-function getArticleImageCaption(article: Article) {
-  return firstPresent(article.featuredMedia?.caption, article.coverCaption);
-}
-
-function getArticleImageCredit(article: Article) {
-  return firstPresent(article.featuredMedia?.credit, article.coverCredit);
-}
 
 export async function generateStaticParams() {
   const articles = await getPublishedArticles();
@@ -113,50 +88,78 @@ export default async function ArticleDetailPage({
   const coverAlt = getArticleImageAlt(article);
   const coverCaption = getArticleImageCaption(article);
   const coverCredit = getArticleImageCredit(article);
+  const relatedArticles = (await getPublishedArticles())
+    .filter((item) => item.slug !== article.slug)
+    .slice(0, 3);
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-10 sm:px-5 sm:py-14">
-      <div className="border-t-2 border-stone-950 pt-5">
-        <p className="editorial-kicker">{article.category}</p>
-
-        <h1 className="mt-4 font-serif text-4xl font-bold leading-tight text-stone-950 sm:text-5xl">
-          {article.title}
-        </h1>
-
-        <p className="mt-6 text-xl leading-8 text-stone-700">{article.excerpt}</p>
-
-        <time className="mt-5 block text-sm font-medium text-stone-500" dateTime={article.publishedAt}>
-          {article.publishedAt}
-        </time>
-      </div>
-
-      {coverImage ? (
-        <figure className="mt-10">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-stone-100 sm:aspect-[16/9]">
-            <Image
-              src={coverImage}
-              alt={coverAlt}
-              fill
-              priority
-              sizes="(min-width: 768px) 768px, 100vw"
-              className="object-cover"
-            />
+    <main className="article-detail">
+      <article className="article-detail__article">
+        <header className="article-hero">
+          <div className="article-hero__meta">
+            <Link className="editorial-kicker" href={`/categorias/${article.category}`}>
+              {article.category}
+            </Link>
+            <span aria-hidden="true" />
+            <time dateTime={article.publishedAt}>{article.publishedAt}</time>
           </div>
-          {coverCaption || coverCredit ? (
-            <figcaption className="mt-3 text-sm leading-6 text-stone-500">
-              {coverCaption}
-              {coverCaption && coverCredit ? " " : null}
-              {coverCredit ? (
-                <span className="font-medium">{coverCredit}</span>
-              ) : null}
-            </figcaption>
+
+          <h1>{article.title}</h1>
+
+          {article.excerpt ? (
+            <p className="article-hero__excerpt">{article.excerpt}</p>
           ) : null}
-        </figure>
+
+          <p className="article-hero__byline">Por {articleAuthor.name}</p>
+        </header>
+
+        {coverImage ? (
+          <figure className="article-cover">
+            <div className="article-cover__image">
+              <Image
+                src={coverImage}
+                alt={coverAlt}
+                fill
+                priority
+                sizes="(min-width: 1024px) 960px, 100vw"
+                className="object-cover"
+              />
+            </div>
+            {coverCaption || coverCredit ? (
+              <figcaption>
+                {coverCaption ? <span>{coverCaption}</span> : null}
+                {coverCaption && coverCredit ? <span aria-hidden="true"> / </span> : null}
+                {coverCredit ? <cite>{coverCredit}</cite> : null}
+              </figcaption>
+            ) : null}
+          </figure>
+        ) : null}
+
+        <div className="article-shell">
+          <ArticleAuthorBox publishedAt={article.publishedAt} />
+
+          <ArticleMarkdown>{article.contentMarkdown}</ArticleMarkdown>
+        </div>
+      </article>
+
+      {relatedArticles.length > 0 ? (
+        <section className="article-related" aria-labelledby="article-related-title">
+          <div className="section-heading">
+            <h2 id="article-related-title">Más en Reunión de Arte</h2>
+            <Link href="/articulos">Todo el archivo</Link>
+          </div>
+
+          <div className="article-related__grid">
+            {relatedArticles.map((relatedArticle) => (
+              <ArticleCard
+                key={relatedArticle.slug}
+                article={relatedArticle}
+                variant="compact"
+              />
+            ))}
+          </div>
+        </section>
       ) : null}
-
-      <ArticleAuthorBox publishedAt={article.publishedAt} />
-
-      <ArticleMarkdown>{article.contentMarkdown}</ArticleMarkdown>
-    </article>
+    </main>
   );
 }
