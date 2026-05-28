@@ -99,9 +99,18 @@ a {
   border-top: 1px solid rgba(24, 23, 19, 0.14);
   border-bottom: 1px solid rgba(24, 23, 19, 0.14);
   padding: 1rem 0;
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease;
 }
 
-.article-author-box__avatar {
+.article-author-box:hover {
+  border-color: rgba(139, 36, 24, 0.34);
+  background: rgba(255, 250, 240, 0.55);
+}
+
+.article-author-avatar {
   position: relative;
   display: grid;
   width: 4rem;
@@ -119,11 +128,23 @@ a {
   letter-spacing: 0.08em;
 }
 
+.article-author-avatar__image {
+  object-fit: cover;
+  object-position: center top;
+}
+
+.article-author-box__avatar {
+  width: 4rem;
+  height: 4rem;
+}
+
 .article-author-box__body {
+  display: block;
   min-width: 0;
 }
 
 .article-author-box__eyebrow {
+  display: block;
   color: var(--accent);
   font-size: 0.68rem;
   font-weight: 800;
@@ -132,6 +153,7 @@ a {
 }
 
 .article-author-box__name {
+  display: block;
   margin-top: 0.18rem;
   color: #181713;
   font-family: Georgia, "Times New Roman", serif;
@@ -148,6 +170,48 @@ a {
   color: #625c51;
   font-size: 0.92rem;
   line-height: 1.45;
+}
+
+.author-profile {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  border-top: 2px solid #181713;
+  border-bottom: 1px solid rgba(24, 23, 19, 0.16);
+  padding: 2rem 0;
+}
+
+.author-profile__avatar {
+  width: 9rem;
+  height: 9rem;
+  font-size: 1.7rem;
+}
+
+.author-profile h1 {
+  margin-top: 0.55rem;
+  color: #181713;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.25rem, 6vw, 4rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 0.98;
+}
+
+.author-profile__role {
+  margin-top: 1rem;
+  color: #38342d;
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.author-profile__bio {
+  max-width: 38rem;
+  margin-top: 0.35rem;
+  color: #625c51;
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .article-author-box__role {
@@ -335,6 +399,17 @@ a {
 }
 
 @media (max-width: 640px) {
+  .author-profile {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .author-profile__avatar {
+    width: 6rem;
+    height: 6rem;
+    font-size: 1.2rem;
+  }
+
   .article-author-box {
     align-items: flex-start;
     gap: 0.85rem;
