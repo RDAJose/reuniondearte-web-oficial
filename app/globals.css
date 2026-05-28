@@ -14,10 +14,12 @@
 }
 
 html {
+  overflow-x: hidden;
   scroll-behavior: smooth;
 }
 
 body {
+  overflow-x: hidden;
   min-height: 100vh;
   margin: 0;
   background: var(--background);
@@ -47,6 +49,8 @@ a {
 
 .section-heading {
   display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -78,6 +82,8 @@ a {
 
 .article-card-placeholder {
   display: grid;
+  width: 100%;
+  min-width: 0;
   place-items: center;
   background:
     linear-gradient(135deg, rgba(139, 36, 24, 0.08), rgba(24, 23, 19, 0.04)),
@@ -86,6 +92,7 @@ a {
 }
 
 .article-card-placeholder span {
+  max-width: calc(100% - 1rem);
   border: 1px solid rgba(24, 23, 19, 0.16);
   border-radius: 999px;
   padding: 0.55rem 0.85rem;
@@ -94,6 +101,7 @@ a {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .home-article-flow {
@@ -106,6 +114,12 @@ a {
     linear-gradient(135deg, rgba(24, 23, 19, 0.05), rgba(139, 36, 24, 0.08)),
     repeating-linear-gradient(0deg, rgba(24, 23, 19, 0.06) 0 1px, transparent 1px 16px),
     var(--paper);
+}
+
+.article-card-title {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .article-author-box {
@@ -159,6 +173,7 @@ a {
 .article-author-box__body {
   display: block;
   min-width: 0;
+  max-width: 100%;
 }
 
 .article-author-box__eyebrow {
@@ -290,6 +305,8 @@ a {
   font-weight: 700;
   letter-spacing: 0;
   line-height: 0.93;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .article-hero__excerpt {
@@ -315,6 +332,8 @@ a {
 
 .article-cover__image {
   position: relative;
+  width: 100%;
+  min-width: 0;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-bottom: 4px solid #181713;
@@ -419,6 +438,7 @@ a {
   position: relative;
   overflow: hidden;
   width: 100%;
+  max-width: 100%;
   margin: 2.25rem 0;
   border: 1px solid rgba(24, 23, 19, 0.12);
   border-radius: 0.75rem;
@@ -464,6 +484,7 @@ a {
 
 .article-link-card {
   display: grid;
+  min-width: 0;
   gap: 0.35rem;
   margin: 2rem 0;
   border: 1px solid rgba(24, 23, 19, 0.15);
@@ -545,6 +566,7 @@ a {
 
 .article-related__grid {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 2rem;
 }
 
@@ -588,6 +610,12 @@ a {
     padding-bottom: 1.55rem;
   }
 
+  .article-hero h1 {
+    max-width: 100%;
+    font-size: clamp(2.1rem, 11vw, 3.05rem);
+    line-height: 1;
+  }
+
   .article-hero__meta {
     gap: 0.55rem;
     font-size: 0.72rem;
@@ -599,8 +627,6 @@ a {
 
   .article-cover__image {
     aspect-ratio: 4 / 3;
-    margin-right: -1rem;
-    margin-left: -1rem;
   }
 
   .article-shell {
@@ -630,6 +656,7 @@ a {
   }
 
   .article-author-box {
+    grid-template-columns: auto minmax(0, 1fr);
     align-items: flex-start;
     gap: 0.85rem;
   }
@@ -643,8 +670,8 @@ a {
   .article-inline-image,
   .article-embed,
   .article-link-card {
-    margin-right: -0.25rem;
-    margin-left: -0.25rem;
+    width: 100%;
+    max-width: 100%;
   }
 
   .article-inline-image,

@@ -42,7 +42,7 @@ export default async function Home() {
       <section className="mx-auto max-w-6xl px-4 py-8 sm:px-5 sm:py-10">
         <div className="border-y border-stone-900 py-5 text-center">
           <p className="editorial-kicker">Revista cultural independiente</p>
-          <h1 className="mt-3 font-serif text-4xl font-bold leading-none text-stone-950 sm:text-6xl">
+          <h1 className="article-card-title mt-3 font-serif text-3xl font-bold leading-none text-stone-950 sm:text-6xl">
             Reunión de Arte
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-stone-600 sm:text-base">
@@ -52,18 +52,18 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-8 px-4 pb-10 sm:px-5 lg:grid-cols-[1.7fr_0.8fr]">
-        <div>
+      <section className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 px-4 pb-10 sm:px-5 lg:grid-cols-[minmax(0,1.7fr)_minmax(16rem,0.8fr)]">
+        <div className="min-w-0">
           <div className="section-heading">
             <p>Portada</p>
           </div>
 
           {leadArticle ? (
-            <article className="grid gap-6 border-b border-stone-300 pb-8 md:grid-cols-[1.05fr_0.95fr]">
+            <article className="grid min-w-0 grid-cols-1 gap-6 border-b border-stone-300 pb-8 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
               {leadImage ? (
                 <Link
                   href={`/articulos/${leadArticle.slug}`}
-                  className="relative aspect-[4/3] overflow-hidden bg-stone-100 md:order-2"
+                  className="relative aspect-[4/3] w-full min-w-0 overflow-hidden bg-stone-100 md:order-2"
                   aria-label={leadArticle.title}
                 >
                   <Image
@@ -78,16 +78,16 @@ export default async function Home() {
               ) : (
                 <Link
                   href={`/articulos/${leadArticle.slug}`}
-                  className="article-card-placeholder aspect-[4/3] md:order-2"
+                  className="article-card-placeholder aspect-[4/3] w-full min-w-0 md:order-2"
                   aria-label={leadArticle.title}
                 >
                   <span>{leadArticle.category}</span>
                 </Link>
               )}
 
-              <div className="md:order-1">
+              <div className="min-w-0 md:order-1">
                 <p className="editorial-kicker">{leadArticle.category}</p>
-                <h2 className="mt-3 font-serif text-4xl font-bold leading-[1.04] text-stone-950 sm:text-5xl">
+                <h2 className="article-card-title mt-3 font-serif text-2xl font-bold leading-[1.12] text-stone-950 sm:text-5xl">
                   <Link
                     href={`/articulos/${leadArticle.slug}`}
                     className="underline-offset-4 hover:underline"
@@ -123,7 +123,7 @@ export default async function Home() {
           )}
         </div>
 
-        <aside className="border-t border-stone-900 pt-4 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+        <aside className="min-w-0 border-t border-stone-900 pt-4 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
           <div className="section-heading">
             <p>Destacados</p>
           </div>
@@ -151,7 +151,7 @@ export default async function Home() {
       </section>
 
       <section className="border-y border-stone-300 bg-[#f6f3ec]">
-        <div className="mx-auto grid max-w-6xl gap-px px-4 py-8 sm:px-5 md:grid-cols-4">
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-px px-4 py-8 sm:px-5 md:grid-cols-4">
           {featuredSections.map((section) => (
             <Link
               key={section.href}

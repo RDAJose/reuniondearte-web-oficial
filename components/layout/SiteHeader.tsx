@@ -16,7 +16,7 @@ export function SiteHeader() {
 
         <nav
           aria-label="Navegación principal"
-          className="-mx-4 flex gap-4 overflow-x-auto border-t border-stone-200 px-4 pt-3 text-sm font-semibold text-stone-700 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:border-t-0 sm:px-0 sm:pt-0"
+          className="flex w-full min-w-0 flex-wrap gap-x-4 gap-y-2 border-t border-stone-200 pt-3 text-sm font-semibold text-stone-700 md:w-auto md:border-t-0 md:pt-0"
         >
           {siteConfig.navItems.map((item) => (
             <Link
