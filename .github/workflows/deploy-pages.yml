@@ -18,6 +18,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      RDA_CONTENT_SOURCE: api
+      RDA_API_BASE_URL: https://reuniondearte-api.onrender.com
 
     steps:
       - name: Checkout repository
