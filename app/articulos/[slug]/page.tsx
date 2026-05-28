@@ -5,8 +5,41 @@ import {
   getArticleBySlug,
   getPublishedArticles,
 } from "@/lib/articles/articles";
+import type { Article } from "@/lib/articles/types";
 
 const EMPTY_ARTICLES_PLACEHOLDER = "__sin-articulos-publicados__";
+
+function firstPresent(...values: Array<string | null | undefined>) {
+  return values.find((value) => value && value.trim().length > 0);
+}
+
+function getArticleImage(article: Article) {
+  return firstPresent(
+    article.featuredMedia?.publicUrl,
+    article.coverImageUrl,
+    article.coverImage,
+    article.featuredImageUrl,
+    article.thumbnailImageUrl,
+  );
+}
+
+function getArticleImageAlt(article: Article) {
+  return (
+    firstPresent(
+      article.featuredMedia?.altText,
+      article.coverAltText,
+      article.coverAlt,
+    ) ?? article.title
+  );
+}
+
+function getArticleImageCaption(article: Article) {
+  return firstPresent(article.featuredMedia?.caption, article.coverCaption);
+}
+
+function getArticleImageCredit(article: Article) {
+  return firstPresent(article.featuredMedia?.credit, article.coverCredit);
+}
 
 export async function generateStaticParams() {
   const articles = await getPublishedArticles();
@@ -32,6 +65,9 @@ export async function generateMetadata({
     return {};
   }
 
+  const coverImage = getArticleImage(article);
+  const coverAlt = getArticleImageAlt(article);
+
   return {
     title: article.title,
     description: article.excerpt,
@@ -40,11 +76,11 @@ export async function generateMetadata({
       description: article.excerpt,
       type: "article",
       publishedTime: article.publishedAt,
-      images: article.coverImage
+      images: coverImage
         ? [
             {
-              url: article.coverImage,
-              alt: article.coverAlt || article.title,
+              url: coverImage,
+              alt: coverAlt,
             },
           ]
         : undefined,
@@ -69,6 +105,11 @@ export default async function ArticleDetailPage({
     notFound();
   }
 
+  const coverImage = getArticleImage(article);
+  const coverAlt = getArticleImageAlt(article);
+  const coverCaption = getArticleImageCaption(article);
+  const coverCredit = getArticleImageCredit(article);
+
   return (
     <article className="mx-auto max-w-3xl px-4 py-10 sm:px-5 sm:py-14">
       <div className="border-t-2 border-stone-950 pt-5">
@@ -85,29 +126,25 @@ export default async function ArticleDetailPage({
         </time>
       </div>
 
-      {article.coverImage ? (
+      {coverImage ? (
         <figure className="mt-10">
           <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-stone-100 sm:aspect-[16/9]">
             <Image
-              src={article.coverImage}
-              alt={article.coverAlt || article.title}
+              src={coverImage}
+              alt={coverAlt}
               fill
               priority
               sizes="(min-width: 768px) 768px, 100vw"
               className="object-cover"
             />
           </div>
-          {article.coverCaption || article.coverCredit ? (
+          {coverCaption || coverCredit ? (
             <figcaption className="mt-3 text-sm leading-6 text-stone-500">
-              {article.coverCaption}
-              {article.coverCaption && article.coverCredit ? " " : null}
-              {article.coverCredit ? (
-                <span className="font-medium">{article.coverCredit}</span>
+              {coverCaption}
+              {coverCaption && coverCredit ? " " : null}
+              {coverCredit ? (
+                <span className="font-medium">{coverCredit}</span>
               ) : null}
-            </figcaption>
-          ) : article.coverAlt ? (
-            <figcaption className="mt-3 text-sm leading-6 text-stone-500">
-              {article.coverAlt}
             </figcaption>
           ) : null}
         </figure>

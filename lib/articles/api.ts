@@ -5,12 +5,20 @@ type ApiArticleSummary = {
   slug?: string;
   excerpt?: string | null;
   category?: string | null;
+  featuredMedia?: {
+    publicUrl?: string | null;
+    altText?: string | null;
+    caption?: string | null;
+    credit?: string | null;
+  } | null;
   coverImage?: string | null;
   coverAlt?: string | null;
   coverCaption?: string | null;
   coverCredit?: string | null;
   coverImageUrl?: string | null;
   coverAltText?: string | null;
+  featuredImageUrl?: string | null;
+  thumbnailImageUrl?: string | null;
   publishedAt?: string | null;
 };
 
@@ -110,10 +118,22 @@ function mapApiArticleSummary(item: ApiArticleSummary): Article | null {
     excerpt: item.excerpt ?? "",
     category: mapCategorySlug(item.category),
     publishedAt: item.publishedAt ?? "",
+    featuredMedia: item.featuredMedia
+      ? {
+          publicUrl: item.featuredMedia.publicUrl ?? undefined,
+          altText: item.featuredMedia.altText ?? undefined,
+          caption: item.featuredMedia.caption ?? undefined,
+          credit: item.featuredMedia.credit ?? undefined,
+        }
+      : undefined,
     coverImage: item.coverImage ?? item.coverImageUrl ?? undefined,
+    coverImageUrl: item.coverImageUrl ?? undefined,
     coverAlt: item.coverAlt ?? item.coverAltText ?? undefined,
+    coverAltText: item.coverAltText ?? undefined,
     coverCaption: item.coverCaption ?? undefined,
     coverCredit: item.coverCredit ?? undefined,
+    featuredImageUrl: item.featuredImageUrl ?? undefined,
+    thumbnailImageUrl: item.thumbnailImageUrl ?? undefined,
     status: "published",
     contentMarkdown: "",
   };
