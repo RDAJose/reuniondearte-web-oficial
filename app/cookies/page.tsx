@@ -1,4 +1,8 @@
-﻿export default function CookiesPage() {
+import { siteConfig } from "@/lib/config/site";
+
+const LAST_UPDATED = "1 de junio de 2026";
+
+export default function CookiesPage() {
   return (
     <section className="mx-auto max-w-4xl px-4 py-12 sm:px-5 sm:py-16">
       <p className="editorial-kicker">Cookies</p>
@@ -8,43 +12,86 @@
 
       <div className="mt-8 space-y-6 border-t border-stone-300 pt-6 leading-8 text-stone-700">
         <p>
-          Esta web, en su versión inicial, no utiliza cookies propias con fines
-          analíticos, publicitarios, de personalización o seguimiento.
+          Última actualización: <strong>{LAST_UPDATED}</strong>.
+        </p>
+        <p>
+          En su estado actual, {siteConfig.name} no incorpora cookies analíticas,
+          publicitarias, de afiliación ni de seguimiento de terceros. Por ese motivo no
+          se muestra un banner de consentimiento de cookies no técnicas.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
-          Cookies técnicas
+          Tecnologías usadas actualmente
         </h2>
         <p>
-          El sitio puede utilizar únicamente elementos técnicos necesarios para
-          su funcionamiento básico, seguridad, carga de páginas o prestación del
-          servicio solicitado por la persona usuaria.
+          La web utiliza localStorage del navegador para recordar un identificador
+          anónimo y el estado local de los likes por artículo. Esta información se guarda
+          en el dispositivo de la persona usuaria y sirve para mantener una interacción
+          básica sin crear cuentas, pedir email ni instalar servicios externos de
+          seguimiento.
+        </p>
+        <p>
+          El navegador o los proveedores de alojamiento pueden usar elementos técnicos
+          necesarios para servir la página, seguridad, disponibilidad o registro técnico
+          básico.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
-          Servicios externos
+          Servicios externos y embeds
         </h2>
         <p>
-          Si en el futuro se insertan vídeos, reproductores, mapas, analítica,
-          formularios, redes sociales, publicidad o servicios de terceros, podrán
-          generarse cookies externas. En ese caso, esta política deberá
-          actualizarse y, si corresponde, se añadirá un sistema de consentimiento.
+          El código del sitio contempla embeds editoriales como YouTube en modo
+          youtube-nocookie.com o Spotify cuando se insertan enlaces compatibles dentro de
+          artículos. Si la persona usuaria interactúa con esos servicios, dichos
+          proveedores pueden aplicar sus propias políticas de privacidad o cookies.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
-          Gestión de cookies
+          Gestión en el navegador
         </h2>
         <p>
-          La persona usuaria puede configurar o eliminar cookies desde las
-          opciones de privacidad de su navegador.
+          Puedes borrar localStorage y cookies desde la configuración de privacidad de
+          tu navegador. Al hacerlo, el estado local de los likes puede reiniciarse.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
-          Estado actual
+          Tabla de cookies y tecnologías
         </h2>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-stone-300 text-stone-950">
+                <th className="py-2 pr-4">Nombre</th>
+                <th className="py-2 pr-4">Titular</th>
+                <th className="py-2 pr-4">Finalidad</th>
+                <th className="py-2 pr-4">Duración</th>
+                <th className="py-2 pr-4">Tipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b border-stone-200">
+                <td className="py-3 pr-4">rda:anonymous-client-id</td>
+                <td className="py-3 pr-4">{siteConfig.name}</td>
+                <td className="py-3 pr-4">Identificador anónimo para likes por navegador.</td>
+                <td className="py-3 pr-4">Hasta borrado del navegador/localStorage.</td>
+                <td className="py-3 pr-4">localStorage funcional.</td>
+              </tr>
+              <tr className="border-b border-stone-200">
+                <td className="py-3 pr-4">rda:article-liked:slug</td>
+                <td className="py-3 pr-4">{siteConfig.name}</td>
+                <td className="py-3 pr-4">Recordar si un artículo fue marcado con “me gusta”.</td>
+                <td className="py-3 pr-4">Hasta borrado del navegador/localStorage.</td>
+                <td className="py-3 pr-4">localStorage funcional.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 className="font-serif text-2xl font-bold text-stone-950">Cambios futuros</h2>
         <p>
-          Estado de esta versión: web editorial estática sin analítica, sin
-          publicidad, sin comentarios, sin usuarios registrados y sin formularios.
+          Si en el futuro se incorporan analítica, publicidad o afiliación con
+          tecnologías de seguimiento, se solicitará consentimiento cuando sea necesario y
+          esta política se actualizará antes de activar esos sistemas.
         </p>
       </div>
     </section>
