@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleAuthorBox } from "@/components/articles/ArticleAuthorBox";
 import { ArticleCard } from "@/components/articles/ArticleCard";
+import { ArticleInteractions } from "@/components/articles/ArticleInteractions";
 import { ArticleMarkdown } from "@/components/articles/ArticleMarkdown";
 import { ArticleShare } from "@/components/articles/ArticleShare";
 import {
@@ -19,16 +20,29 @@ import {
 import { siteConfig } from "@/lib/config/site";
 
 const EMPTY_ARTICLES_PLACEHOLDER = "__sin-articulos-publicados__";
+const PUBLIC_API_BASE_URL = "https://reuniondearte-api.onrender.com";
+const OFFICIAL_ARTICLE_SLUG_FALLBACKS = [
+  "vivienda-minimalista-diseno-funcional-y-asequible",
+];
+
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   const articles = await getPublishedArticles();
+  const slugs = Array.from(
+    new Set(
+      [...articles.map((article) => article.slug), ...OFFICIAL_ARTICLE_SLUG_FALLBACKS]
+        .map((slug) => normalizeStaticSlug(slug))
+        .filter((slug): slug is string => Boolean(slug)),
+    ),
+  );
 
-  if (articles.length === 0) {
+  if (slugs.length === 0) {
     return [{ slug: EMPTY_ARTICLES_PLACEHOLDER }];
   }
 
-  return articles.map((article) => ({
-    slug: article.slug,
+  return slugs.map((slug) => ({
+    slug,
   }));
 }
 
@@ -75,12 +89,13 @@ export default async function ArticleDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const articleSlug = normalizeStaticSlug(slug);
 
-  if (slug === EMPTY_ARTICLES_PLACEHOLDER) {
+  if (!articleSlug || articleSlug === EMPTY_ARTICLES_PLACEHOLDER) {
     notFound();
   }
 
-  const article = await getArticleBySlug(slug);
+  const article = await getArticleBySlug(articleSlug);
 
   if (!article || article.status !== "published") {
     notFound();
@@ -93,7 +108,8 @@ export default async function ArticleDetailPage({
   const relatedArticles = (await getPublishedArticles())
     .filter((item) => item.slug !== article.slug)
     .slice(0, 3);
-  const articleUrl = new URL(`/articulos/${article.slug}/`, siteConfig.url).toString();
+  const articleUrl = new URL(`/articulos/${articleSlug}/`, siteConfig.url).toString();
+  const apiBaseUrl = process.env.RDA_API_BASE_URL ?? PUBLIC_API_BASE_URL;
 
   return (
     <main className="article-detail">
@@ -143,6 +159,8 @@ export default async function ArticleDetailPage({
 
           <ArticleMarkdown>{article.contentMarkdown}</ArticleMarkdown>
 
+          <ArticleInteractions slug={articleSlug} title={article.title} apiBaseUrl={apiBaseUrl} />
+
           <ArticleShare title={article.title} url={articleUrl} />
         </div>
       </article>
@@ -167,4 +185,9 @@ export default async function ArticleDetailPage({
       ) : null}
     </main>
   );
+}
+
+function normalizeStaticSlug(slug: string | null | undefined) {
+  const cleanSlug = slug?.trim().replace(/^\/?articulos\//, "").replace(/^\/+|\/+$/g, "");
+  return cleanSlug || null;
 }

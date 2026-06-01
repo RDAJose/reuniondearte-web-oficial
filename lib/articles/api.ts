@@ -63,8 +63,10 @@ const categoryFallbacks: Record<ArticleCategory, { name: string; description: st
   },
 };
 
+const PUBLIC_API_BASE_URL = "https://reuniondearte-api.onrender.com";
+
 export function shouldUseApiContent() {
-  return process.env.RDA_CONTENT_SOURCE === "api" && Boolean(process.env.RDA_API_BASE_URL);
+  return process.env.RDA_CONTENT_SOURCE === "api" || Boolean(getApiBaseUrl());
 }
 
 export async function getApiPublishedArticles(): Promise<Article[]> {
@@ -90,10 +92,7 @@ export async function getApiPublishedArticlesByCategory(slug: string): Promise<A
 }
 
 async function apiGet<T>(pathname: string): Promise<T> {
-  const baseUrl = process.env.RDA_API_BASE_URL;
-  if (!baseUrl) {
-    throw new Error("RDA_API_BASE_URL is not configured.");
-  }
+  const baseUrl = getApiBaseUrl();
 
   const response = await fetch(`${baseUrl.replace(/\/$/, "")}${pathname}`, {
     headers: { Accept: "application/json" },
@@ -105,6 +104,10 @@ async function apiGet<T>(pathname: string): Promise<T> {
   }
 
   return response.json() as Promise<T>;
+}
+
+function getApiBaseUrl() {
+  return process.env.RDA_API_BASE_URL ?? PUBLIC_API_BASE_URL;
 }
 
 function mapApiArticleSummary(item: ApiArticleSummary): Article | null {

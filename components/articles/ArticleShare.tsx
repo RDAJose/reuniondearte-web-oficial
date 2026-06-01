@@ -57,13 +57,6 @@ export function ArticleShare({ title, url }: ArticleShareProps) {
         <button type="button" onClick={copyUrl}>
           Copiar enlace
         </button>
-        <a
-          href={`https://wa.me/?text=${encoded.title}%20${encoded.url}`}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          WhatsApp
-        </a>
         <a href={`mailto:?subject=${encoded.title}&body=${encoded.url}`}>Correo</a>
       </div>
 
