@@ -1,4 +1,4 @@
-import { siteConfig } from "@/lib/config/site";
+﻿import { siteConfig } from "@/lib/config/site";
 
 const LAST_UPDATED = "2 de junio de 2026";
 
@@ -12,7 +12,7 @@ export default function CookiesPage() {
 
       <div className="mt-8 space-y-6 border-t border-stone-300 pt-6 leading-8 text-stone-700">
         <p>
-          Última actualización: <strong>{LAST_UPDATED}</strong>.
+          Ãšltima actualización: <strong>{LAST_UPDATED}</strong>.
         </p>
         <p>
           {siteConfig.name} puede usar Google Analytics 4 solo si la persona usuaria
@@ -46,7 +46,7 @@ export default function CookiesPage() {
         </h2>
         <p>
           Si se acepta la analítica, se carga Google Analytics 4 con el ID de medición
-          G-Q21Z217Z8C. La finalidad es medir visitas, páginas vistas, dispositivos, país
+          G-021Z217Z8C. La finalidad es medir visitas, páginas vistas, dispositivos, país
           aproximado, fuentes de tráfico y rendimiento editorial. El proveedor es Google.
           No se activa publicidad, remarketing, Google Ads ni Google Tag Manager.
         </p>
@@ -114,7 +114,7 @@ export default function CookiesPage() {
               <tr className="border-b border-stone-200">
                 <td className="py-3 pr-4">rda:article-liked:slug</td>
                 <td className="py-3 pr-4">{siteConfig.name}</td>
-                <td className="py-3 pr-4">Recordar si un artículo fue marcado con “me gusta”.</td>
+                <td className="py-3 pr-4">Recordar si un artículo fue marcado con â€œme gustaâ€.</td>
                 <td className="py-3 pr-4">Hasta borrado del navegador/localStorage.</td>
                 <td className="py-3 pr-4">localStorage funcional.</td>
               </tr>
@@ -132,3 +132,4 @@ export default function CookiesPage() {
     </section>
   );
 }
+

@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 
-const GA_MEASUREMENT_ID = "G-Q21Z217Z8C";
+const GA_MEASUREMENT_ID = "G-021Z217Z8C";
 const CONSENT_STORAGE_KEY = "rda:analytics-consent";
 const CONSENT_CHANGE_EVENT = "rda:analytics-consent-change";
 const ACCEPTED = "accepted";
@@ -238,3 +238,4 @@ export function AnalyticsConsent() {
     </section>
   );
 }
+
