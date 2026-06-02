@@ -39,17 +39,21 @@ export default async function Home() {
 
   return (
     <div className="bg-[#fffdf8]">
-      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-5 sm:py-10">
-        <div className="border-y border-stone-900 py-5 text-center">
+      <section className="mx-auto max-w-6xl px-4 py-5 sm:px-5 sm:py-6">
+        <Link
+          href="/"
+          className="group block border-y border-stone-900 py-3.5 text-center no-underline transition-colors duration-200 hover:border-stone-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8b2418] sm:py-4"
+          aria-label="Ir a la portada de Reunión de Arte"
+        >
           <p className="editorial-kicker">Revista cultural independiente</p>
-          <h1 className="article-card-title mt-3 font-serif text-3xl font-bold leading-none text-stone-950 sm:text-6xl">
+          <h1 className="article-card-title mt-2 font-serif text-[2.35rem] font-bold leading-none text-stone-950 transition-colors duration-200 group-hover:text-[#8b2418] sm:text-5xl">
             Reunión de Arte
           </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-stone-600 sm:text-base">
+          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-stone-600">
             Cine, música, arte y libros con mirada crítica, archivo cuidado y
             lectura clara en móvil y escritorio.
           </p>
-        </div>
+        </Link>
       </section>
 
       <section className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 px-4 pb-10 sm:px-5 lg:grid-cols-[minmax(0,1.7fr)_minmax(16rem,0.8fr)]">
