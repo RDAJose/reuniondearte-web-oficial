@@ -32,7 +32,8 @@ export default async function Home() {
   const latestArticles = await getPublishedArticles();
   const leadArticle = latestArticles[0];
   const secondaryArticles = latestArticles.slice(1, 4);
-  const articleFeed = latestArticles.slice(1, 10);
+  const recentArticles = latestArticles.slice(4, 7);
+  const articleFeed = latestArticles.slice(7, 16);
   const leadImage = leadArticle ? getArticleImage(leadArticle) : undefined;
   const leadImageAlt = leadArticle ? getArticleImageAlt(leadArticle) : "";
   const leadDate = leadArticle ? formatArticleDate(leadArticle.publishedAt) : "";
@@ -123,6 +124,21 @@ export default async function Home() {
               </p>
             </div>
           )}
+
+          {recentArticles.length > 0 ? (
+            <section className="mt-8" aria-labelledby="home-recent-title">
+              <div className="section-heading">
+                <h2 id="home-recent-title">Más recientes</h2>
+                <Link href="/articulos">Ver archivo</Link>
+              </div>
+
+              <div className="grid min-w-0 gap-6 sm:grid-cols-2">
+                {recentArticles.map((article) => (
+                  <ArticleCard key={article.slug} article={article} variant="compact" />
+                ))}
+              </div>
+            </section>
+          ) : null}
         </div>
 
         <aside className="min-w-0 border-t border-stone-900 pt-4 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
@@ -171,13 +187,13 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-5 sm:py-12">
-        <div className="section-heading">
-          <p>Últimas publicaciones</p>
-          <Link href="/articulos">Todo el archivo</Link>
-        </div>
+      {articleFeed.length > 0 ? (
+        <section className="mx-auto max-w-6xl px-4 py-10 sm:px-5 sm:py-12">
+          <div className="section-heading">
+            <p>Últimas publicaciones</p>
+            <Link href="/articulos">Todo el archivo</Link>
+          </div>
 
-        {articleFeed.length > 0 ? (
           <div className="home-article-flow">
             {articleFeed.map((article) => (
               <ArticleCard
@@ -187,28 +203,8 @@ export default async function Home() {
               />
             ))}
           </div>
-        ) : leadArticle ? (
-          <div className="border-t border-stone-300 pt-5">
-            <p className="max-w-3xl leading-7 text-stone-700">
-              La portada ira incorporando nuevas entradas publicadas desde el
-              archivo editorial.
-            </p>
-            <Link
-              href="/articulos"
-              className="mt-4 inline-block text-sm font-semibold text-stone-950 underline underline-offset-4"
-            >
-              Ver articulos publicados
-            </Link>
-          </div>
-        ) : (
-          <div className="border-t border-stone-300 pt-5">
-            <p className="max-w-3xl leading-7 text-stone-700">
-              Los textos migrados se incorporarán de forma selectiva cuando estén
-              revisados y listos para publicación.
-            </p>
-          </div>
-        )}
-      </section>
+        </section>
+      ) : null}
     </div>
   );
 }
