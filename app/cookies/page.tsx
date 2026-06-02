@@ -18,6 +18,7 @@ export default function CookiesPage() {
           {siteConfig.name} puede usar Google Analytics 4 solo si la persona usuaria
           acepta expresamente la analítica. Si se rechaza o no existe una decisión
           previa, la analítica permanece desactivada y no se envían páginas vistas.
+          La etiqueta de Google puede cargarse con consentimiento denegado por defecto.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
@@ -45,7 +46,7 @@ export default function CookiesPage() {
           Analítica opcional
         </h2>
         <p>
-          Si se acepta la analítica, se carga Google Analytics 4 con el ID de medición
+          Si se acepta la analítica, se activa Google Analytics 4 con el ID de medición
           G-021Z217Z8C. La finalidad es medir visitas, páginas vistas, dispositivos, país
           aproximado, fuentes de tráfico y rendimiento editorial. El proveedor es Google.
           No se activa publicidad, remarketing, Google Ads ni Google Tag Manager.

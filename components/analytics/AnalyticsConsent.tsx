@@ -3,7 +3,6 @@
 import { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 
-const GA_MEASUREMENT_ID = "G-021Z217Z8C";
 const CONSENT_STORAGE_KEY = "rda:analytics-consent";
 const CONSENT_CHANGE_EVENT = "rda:analytics-consent-change";
 const ACCEPTED = "accepted";
@@ -13,9 +12,6 @@ const LOADING = "loading";
 type ConsentValue = typeof ACCEPTED | typeof REJECTED;
 type ConsentSnapshot = ConsentValue | null | typeof LOADING;
 
-let googleAnalyticsLoadPromise: Promise<void> | null = null;
-let isConsentDefaultConfigured = false;
-let isGoogleAnalyticsConfigured = false;
 let lastTrackedPage: string | null = null;
 
 declare global {
@@ -62,86 +58,30 @@ function getServerConsentSnapshot(): ConsentSnapshot {
   return LOADING;
 }
 
-function prepareGoogleTag() {
+function ensureGoogleTag() {
   window.dataLayer = window.dataLayer ?? [];
   window.gtag =
     window.gtag ??
     function gtag(...args: unknown[]) {
       window.dataLayer?.push(args);
     };
-
-  if (!isConsentDefaultConfigured) {
-    isConsentDefaultConfigured = true;
-    window.gtag("consent", "default", {
-      ad_personalization: "denied",
-      ad_storage: "denied",
-      ad_user_data: "denied",
-      analytics_storage: "denied",
-    });
-  }
-}
-
-function configureGoogleAnalytics() {
-  if (isGoogleAnalyticsConfigured) {
-    return;
-  }
-
-  isGoogleAnalyticsConfigured = true;
-  window.gtag?.("js", new Date());
-  window.gtag?.("config", GA_MEASUREMENT_ID, {
-    allow_ad_personalization_signals: false,
-    allow_google_signals: false,
-    send_page_view: false,
-  });
-}
-
-function ensureGoogleAnalyticsLoaded() {
-  prepareGoogleTag();
-  configureGoogleAnalytics();
-
-  if (googleAnalyticsLoadPromise) {
-    return googleAnalyticsLoadPromise;
-  }
-
-  googleAnalyticsLoadPromise = new Promise((resolve) => {
-    const existingScript = document.getElementById(
-      "google-analytics-gtag",
-    ) as HTMLScriptElement | null;
-
-    if (existingScript?.dataset.loaded === "true") {
-      resolve();
-      return;
-    }
-
-    const script = existingScript ?? document.createElement("script");
-
-    script.async = true;
-    script.id = "google-analytics-gtag";
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-    script.addEventListener(
-      "load",
-      () => {
-        script.dataset.loaded = "true";
-        resolve();
-      },
-      { once: true },
-    );
-
-    if (!existingScript) {
-      document.head.appendChild(script);
-    }
-  });
-
-  return googleAnalyticsLoadPromise;
 }
 
 function grantAnalyticsConsent() {
+  ensureGoogleTag();
   window.gtag?.("consent", "update", {
     analytics_storage: "granted",
   });
 }
 
-async function sendPageView() {
+function denyAnalyticsConsent() {
+  ensureGoogleTag();
+  window.gtag?.("consent", "update", {
+    analytics_storage: "denied",
+  });
+}
+
+function sendPageView() {
   const pagePath = `${window.location.pathname}${window.location.search}`;
   const pageLocation = window.location.href;
 
@@ -149,7 +89,6 @@ async function sendPageView() {
     return;
   }
 
-  await ensureGoogleAnalyticsLoaded();
   grantAnalyticsConsent();
 
   window.gtag?.("event", "page_view", {
@@ -169,16 +108,12 @@ export function AnalyticsConsent() {
   );
 
   useEffect(() => {
-    if (consent !== LOADING) {
-      void ensureGoogleAnalyticsLoaded();
-    }
-
     if (consent === ACCEPTED) {
-      void sendPageView();
+      sendPageView();
 
       const queuePageView = () => {
         window.setTimeout(() => {
-          void sendPageView();
+          sendPageView();
         }, 0);
       };
       const originalPushState = window.history.pushState;
@@ -208,15 +143,20 @@ export function AnalyticsConsent() {
         window.removeEventListener("popstate", queuePageView);
       };
     }
+
+    if (consent === REJECTED) {
+      denyAnalyticsConsent();
+    }
   }, [consent]);
 
   function acceptAnalytics() {
     storeConsent(ACCEPTED);
-    void sendPageView();
+    sendPageView();
   }
 
   function rejectAnalytics() {
     storeConsent(REJECTED);
+    denyAnalyticsConsent();
   }
 
   if (consent === LOADING || consent) {

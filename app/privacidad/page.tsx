@@ -48,7 +48,8 @@ export default function PrivacidadPage() {
           datos de uso agregados, como visitas, páginas vistas, dispositivo, país
           aproximado, fuente de tráfico y señales de rendimiento editorial. Si se rechaza
           la analítica, se mantiene el consentimiento denegado y no se envían eventos de
-          medición.
+          medición. La etiqueta de Google puede cargarse con consentimiento denegado por
+          defecto.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Finalidades</h2>
