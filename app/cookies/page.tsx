@@ -46,7 +46,7 @@ export default function CookiesPage() {
         </h2>
         <p>
           Si se acepta la analítica, se carga Google Analytics 4 con el ID de medición
-          G-Z5Z0W57WZ. La finalidad es medir visitas, páginas vistas, dispositivos, país
+          G-Q21Z217Z8C. La finalidad es medir visitas, páginas vistas, dispositivos, país
           aproximado, fuentes de tráfico y rendimiento editorial. El proveedor es Google.
           No se activa publicidad, remarketing, Google Ads ni Google Tag Manager.
         </p>
