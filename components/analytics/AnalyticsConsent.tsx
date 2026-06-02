@@ -13,6 +13,8 @@ const LOADING = "loading";
 type ConsentValue = typeof ACCEPTED | typeof REJECTED;
 type ConsentSnapshot = ConsentValue | null | typeof LOADING;
 
+let lastTrackedPage: string | null = null;
+
 declare global {
   interface Window {
     dataLayer?: unknown[];
@@ -57,11 +59,7 @@ function getServerConsentSnapshot(): ConsentSnapshot {
   return LOADING;
 }
 
-function loadGoogleAnalytics() {
-  if (document.getElementById("google-analytics-gtag")) {
-    return;
-  }
-
+function prepareGoogleAnalytics() {
   window.dataLayer = window.dataLayer ?? [];
   window.gtag =
     window.gtag ??
@@ -77,13 +75,42 @@ function loadGoogleAnalytics() {
   });
   window.gtag("set", "allow_ad_personalization_signals", false);
   window.gtag("js", new Date());
-  window.gtag("config", GA_MEASUREMENT_ID);
+  window.gtag("config", GA_MEASUREMENT_ID, {
+    send_page_view: false,
+  });
+}
+
+function loadGoogleAnalytics() {
+  prepareGoogleAnalytics();
+
+  if (document.getElementById("google-analytics-gtag")) {
+    return;
+  }
 
   const script = document.createElement("script");
   script.async = true;
   script.id = "google-analytics-gtag";
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
   document.head.appendChild(script);
+}
+
+function trackPageView() {
+  loadGoogleAnalytics();
+
+  const pagePath = `${window.location.pathname}${window.location.search}`;
+  const pageLocation = window.location.href;
+
+  if (lastTrackedPage === pageLocation) {
+    return;
+  }
+
+  lastTrackedPage = pageLocation;
+
+  window.gtag?.("event", "page_view", {
+    page_location: pageLocation,
+    page_path: pagePath,
+    page_title: document.title,
+  });
 }
 
 export function AnalyticsConsent() {
@@ -95,13 +122,43 @@ export function AnalyticsConsent() {
 
   useEffect(() => {
     if (consent === ACCEPTED) {
-      loadGoogleAnalytics();
+      trackPageView();
+
+      const queuePageView = () => {
+        window.setTimeout(trackPageView, 0);
+      };
+      const originalPushState = window.history.pushState;
+      const originalReplaceState = window.history.replaceState;
+
+      window.history.pushState = function pushState(
+        ...args: Parameters<History["pushState"]>
+      ) {
+        const result = originalPushState.apply(this, args);
+        queuePageView();
+        return result;
+      };
+
+      window.history.replaceState = function replaceState(
+        ...args: Parameters<History["replaceState"]>
+      ) {
+        const result = originalReplaceState.apply(this, args);
+        queuePageView();
+        return result;
+      };
+
+      window.addEventListener("popstate", queuePageView);
+
+      return () => {
+        window.history.pushState = originalPushState;
+        window.history.replaceState = originalReplaceState;
+        window.removeEventListener("popstate", queuePageView);
+      };
     }
   }, [consent]);
 
   function acceptAnalytics() {
     storeConsent(ACCEPTED);
-    loadGoogleAnalytics();
+    trackPageView();
   }
 
   function rejectAnalytics() {
