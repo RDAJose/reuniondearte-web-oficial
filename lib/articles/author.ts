@@ -1,9 +1,9 @@
 export const articleAuthor = {
   avatarPath: "/authors/jose-luis-olmedo.jpg",
-  bio: "Crítica cultural, cine, música, arte y pensamiento visual.",
+  bio: "Creador, desarrollador y editor de Reunión de Arte. Crítica cultural, cine, música y arte.",
   href: "/autores/jose-luis-olmedo",
   initials: "JO",
   name: "Jose Luis Olmedo Barrionuevo",
-  role: "Director y editor de Reunión de Arte",
+  role: "Creador, desarrollador y editor de Reunión de Arte",
   slug: "jose-luis-olmedo",
 };
