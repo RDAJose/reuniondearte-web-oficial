@@ -1,6 +1,6 @@
 import { siteConfig } from "@/lib/config/site";
 
-const LAST_UPDATED = "1 de junio de 2026";
+const LAST_UPDATED = "2 de junio de 2026";
 const PENDING_VALUE = "PENDIENTE_DE_COMPLETAR";
 
 export default function PrivacidadPage() {
@@ -43,6 +43,12 @@ export default function PrivacidadPage() {
           conexión o registros técnicos, como dirección IP, fecha, hora, navegador,
           errores o actividad necesaria para seguridad, disponibilidad y mantenimiento.
         </p>
+        <p>
+          Si la persona usuaria acepta la analítica, Google Analytics 4 puede tratar
+          datos de uso agregados, como visitas, páginas vistas, dispositivo, país
+          aproximado, fuente de tráfico y señales de rendimiento editorial. Si se rechaza
+          la analítica, este servicio no se carga.
+        </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Finalidades</h2>
         <ul className="list-disc space-y-2 pl-6">
@@ -51,6 +57,7 @@ export default function PrivacidadPage() {
           <li>Gestionar likes anónimos por navegador.</li>
           <li>Atender comunicaciones recibidas por email.</li>
           <li>Proteger la seguridad técnica del sitio y prevenir abuso, spam o usos indebidos.</li>
+          <li>Medir rendimiento editorial y uso agregado del sitio solo tras consentimiento.</li>
         </ul>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Base jurídica</h2>
@@ -60,6 +67,11 @@ export default function PrivacidadPage() {
           de abuso se basan en el interés legítimo de mantener un espacio editorial
           seguro, estable y respetuoso. Las comunicaciones por email se tratan para
           atender la solicitud enviada voluntariamente.
+        </p>
+        <p>
+          La analítica opcional con Google Analytics 4 se basa exclusivamente en el
+          consentimiento previo. Puede rechazarse desde el banner sin impedir el acceso a
+          la web.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Conservación</h2>
@@ -80,6 +92,10 @@ export default function PrivacidadPage() {
           GitHub Pages para alojamiento web estático, Render para backend/API y base de
           datos PostgreSQL, Cloudflare R2 para imágenes y archivos media, y GitHub para
           repositorio y despliegue.
+        </p>
+        <p>
+          Si se acepta la analítica, interviene Google como proveedor de Google Analytics
+          4. No se activa publicidad, remarketing, Google Ads ni Google Tag Manager.
         </p>
         <p>
           Estos proveedores pueden operar desde fuera del Espacio Económico Europeo o

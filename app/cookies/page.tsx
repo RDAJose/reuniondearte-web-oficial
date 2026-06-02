@@ -1,6 +1,6 @@
 import { siteConfig } from "@/lib/config/site";
 
-const LAST_UPDATED = "1 de junio de 2026";
+const LAST_UPDATED = "2 de junio de 2026";
 
 export default function CookiesPage() {
   return (
@@ -15,9 +15,9 @@ export default function CookiesPage() {
           Última actualización: <strong>{LAST_UPDATED}</strong>.
         </p>
         <p>
-          En su estado actual, {siteConfig.name} no incorpora cookies analíticas,
-          publicitarias, de afiliación ni de seguimiento de terceros. Por ese motivo no
-          se muestra un banner de consentimiento de cookies no técnicas.
+          {siteConfig.name} puede usar Google Analytics 4 solo si la persona usuaria
+          acepta expresamente la analítica. Si se rechaza o no existe una decisión
+          previa, Google Analytics no se carga.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
@@ -31,9 +31,28 @@ export default function CookiesPage() {
           seguimiento.
         </p>
         <p>
+          También se utiliza localStorage para recordar la decisión sobre analítica:
+          aceptación o rechazo. Esta decisión evita preguntar de nuevo en cada visita y
+          no implica por sí misma el uso de cookies de Google.
+        </p>
+        <p>
           El navegador o los proveedores de alojamiento pueden usar elementos técnicos
           necesarios para servir la página, seguridad, disponibilidad o registro técnico
           básico.
+        </p>
+
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
+          Analítica opcional
+        </h2>
+        <p>
+          Si se acepta la analítica, se carga Google Analytics 4 con el ID de medición
+          G-Z5Z0W57WZ. La finalidad es medir visitas, páginas vistas, dispositivos, país
+          aproximado, fuentes de tráfico y rendimiento editorial. El proveedor es Google.
+          No se activa publicidad, remarketing, Google Ads ni Google Tag Manager.
+        </p>
+        <p>
+          Si se rechaza la analítica, Google Analytics no se carga. La decisión puede
+          modificarse borrando el almacenamiento local del navegador para este sitio.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
@@ -70,6 +89,22 @@ export default function CookiesPage() {
             </thead>
             <tbody>
               <tr className="border-b border-stone-200">
+                <td className="py-3 pr-4">rda:analytics-consent</td>
+                <td className="py-3 pr-4">{siteConfig.name}</td>
+                <td className="py-3 pr-4">Recordar aceptación o rechazo de analítica.</td>
+                <td className="py-3 pr-4">Hasta borrado del navegador/localStorage.</td>
+                <td className="py-3 pr-4">localStorage de consentimiento.</td>
+              </tr>
+              <tr className="border-b border-stone-200">
+                <td className="py-3 pr-4">_ga, _ga_*</td>
+                <td className="py-3 pr-4">Google</td>
+                <td className="py-3 pr-4">
+                  Medición agregada con Google Analytics 4, solo tras aceptación.
+                </td>
+                <td className="py-3 pr-4">Según configuración de Google Analytics.</td>
+                <td className="py-3 pr-4">Analítica opcional de tercero.</td>
+              </tr>
+              <tr className="border-b border-stone-200">
                 <td className="py-3 pr-4">rda:anonymous-client-id</td>
                 <td className="py-3 pr-4">{siteConfig.name}</td>
                 <td className="py-3 pr-4">Identificador anónimo para likes por navegador.</td>
@@ -89,8 +124,8 @@ export default function CookiesPage() {
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Cambios futuros</h2>
         <p>
-          Si en el futuro se incorporan analítica, publicidad o afiliación con
-          tecnologías de seguimiento, se solicitará consentimiento cuando sea necesario y
+          Si en el futuro se incorporan publicidad, afiliación, remarketing u otros
+          servicios de seguimiento, se solicitará consentimiento cuando sea necesario y
           esta política se actualizará antes de activar esos sistemas.
         </p>
       </div>

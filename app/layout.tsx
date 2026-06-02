@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AnalyticsConsent } from "@/components/analytics/AnalyticsConsent";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { siteConfig } from "@/lib/config/site";
@@ -33,6 +34,7 @@ export default function RootLayout({
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />
+        <AnalyticsConsent />
       </body>
     </html>
   );
