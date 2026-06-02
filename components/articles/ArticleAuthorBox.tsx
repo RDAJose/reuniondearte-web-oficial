@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { ArticleAuthorAvatar } from "@/components/articles/ArticleAuthorAvatar";
 import { articleAuthor } from "@/lib/articles/author";
+import { formatArticleDate } from "@/lib/articles/dates";
 
 type ArticleAuthorBoxProps = {
   publishedAt?: string;
 };
 
 export function ArticleAuthorBox({ publishedAt }: ArticleAuthorBoxProps) {
+  const readableDate = publishedAt ? formatArticleDate(publishedAt) : "";
+
   return (
     <aside aria-label="Autor del artículo">
       <Link className="article-author-box" href={articleAuthor.href}>
@@ -17,9 +20,9 @@ export function ArticleAuthorBox({ publishedAt }: ArticleAuthorBoxProps) {
           <span className="article-author-box__name">{articleAuthor.name}</span>
           <span className="article-author-box__role">{articleAuthor.role}</span>
           <span className="article-author-box__bio">{articleAuthor.bio}</span>
-          {publishedAt ? (
+          {readableDate ? (
             <time className="article-author-box__date" dateTime={publishedAt}>
-              Publicado el {publishedAt}
+              Publicado el {readableDate}
             </time>
           ) : null}
         </span>

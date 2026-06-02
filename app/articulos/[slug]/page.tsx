@@ -11,6 +11,7 @@ import {
   getPublishedArticles,
 } from "@/lib/articles/articles";
 import { articleAuthor } from "@/lib/articles/author";
+import { formatArticleDate } from "@/lib/articles/dates";
 import {
   getArticleImage,
   getArticleImageAlt,
@@ -110,6 +111,7 @@ export default async function ArticleDetailPage({
     .slice(0, 3);
   const articleUrl = new URL(`/articulos/${articleSlug}/`, siteConfig.url).toString();
   const apiBaseUrl = process.env.RDA_API_BASE_URL ?? PUBLIC_API_BASE_URL;
+  const readableDate = formatArticleDate(article.publishedAt);
 
   return (
     <main className="article-detail">
@@ -119,8 +121,12 @@ export default async function ArticleDetailPage({
             <Link className="editorial-kicker" href={`/categorias/${article.category}`}>
               {article.category}
             </Link>
-            <span aria-hidden="true" />
-            <time dateTime={article.publishedAt}>{article.publishedAt}</time>
+            {readableDate ? (
+              <>
+                <span aria-hidden="true" />
+                <time dateTime={article.publishedAt}>{readableDate}</time>
+              </>
+            ) : null}
           </div>
 
           <h1>{article.title}</h1>
