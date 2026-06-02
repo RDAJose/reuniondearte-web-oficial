@@ -17,7 +17,7 @@ export default function CookiesPage() {
         <p>
           {siteConfig.name} puede usar Google Analytics 4 solo si la persona usuaria
           acepta expresamente la analítica. Si se rechaza o no existe una decisión
-          previa, Google Analytics no se carga.
+          previa, la analítica permanece desactivada y no se envían páginas vistas.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
@@ -51,8 +51,9 @@ export default function CookiesPage() {
           No se activa publicidad, remarketing, Google Ads ni Google Tag Manager.
         </p>
         <p>
-          Si se rechaza la analítica, Google Analytics no se carga. La decisión puede
-          modificarse borrando el almacenamiento local del navegador para este sitio.
+          Si se rechaza la analítica, se mantiene el consentimiento denegado y no se
+          envían eventos de medición. La decisión puede modificarse borrando el
+          almacenamiento local del navegador para este sitio.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">

@@ -14,6 +14,7 @@ type ConsentValue = typeof ACCEPTED | typeof REJECTED;
 type ConsentSnapshot = ConsentValue | null | typeof LOADING;
 
 let googleAnalyticsLoadPromise: Promise<void> | null = null;
+let isConsentDefaultConfigured = false;
 let isGoogleAnalyticsConfigured = false;
 let lastTrackedPage: string | null = null;
 
@@ -61,7 +62,7 @@ function getServerConsentSnapshot(): ConsentSnapshot {
   return LOADING;
 }
 
-function prepareGoogleAnalyticsGlobals() {
+function prepareGoogleTag() {
   window.dataLayer = window.dataLayer ?? [];
   window.gtag =
     window.gtag ??
@@ -69,13 +70,15 @@ function prepareGoogleAnalyticsGlobals() {
       window.dataLayer?.push(args);
     };
 
-  window.gtag("consent", "default", {
-    ad_personalization: "denied",
-    ad_storage: "denied",
-    ad_user_data: "denied",
-    analytics_storage: "granted",
-  });
-  window.gtag("set", "allow_ad_personalization_signals", false);
+  if (!isConsentDefaultConfigured) {
+    isConsentDefaultConfigured = true;
+    window.gtag("consent", "default", {
+      ad_personalization: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      analytics_storage: "denied",
+    });
+  }
 }
 
 function configureGoogleAnalytics() {
@@ -93,7 +96,8 @@ function configureGoogleAnalytics() {
 }
 
 function ensureGoogleAnalyticsLoaded() {
-  prepareGoogleAnalyticsGlobals();
+  prepareGoogleTag();
+  configureGoogleAnalytics();
 
   if (googleAnalyticsLoadPromise) {
     return googleAnalyticsLoadPromise;
@@ -105,7 +109,6 @@ function ensureGoogleAnalyticsLoaded() {
     ) as HTMLScriptElement | null;
 
     if (existingScript?.dataset.loaded === "true") {
-      configureGoogleAnalytics();
       resolve();
       return;
     }
@@ -119,7 +122,6 @@ function ensureGoogleAnalyticsLoaded() {
       "load",
       () => {
         script.dataset.loaded = "true";
-        configureGoogleAnalytics();
         resolve();
       },
       { once: true },
@@ -133,6 +135,12 @@ function ensureGoogleAnalyticsLoaded() {
   return googleAnalyticsLoadPromise;
 }
 
+function grantAnalyticsConsent() {
+  window.gtag?.("consent", "update", {
+    analytics_storage: "granted",
+  });
+}
+
 async function sendPageView() {
   const pagePath = `${window.location.pathname}${window.location.search}`;
   const pageLocation = window.location.href;
@@ -141,15 +149,16 @@ async function sendPageView() {
     return;
   }
 
-  lastTrackedPage = pageLocation;
-
   await ensureGoogleAnalyticsLoaded();
+  grantAnalyticsConsent();
 
   window.gtag?.("event", "page_view", {
     page_location: pageLocation,
     page_path: pagePath,
     page_title: document.title,
   });
+
+  lastTrackedPage = pageLocation;
 }
 
 export function AnalyticsConsent() {
@@ -160,6 +169,10 @@ export function AnalyticsConsent() {
   );
 
   useEffect(() => {
+    if (consent !== LOADING) {
+      void ensureGoogleAnalyticsLoaded();
+    }
+
     if (consent === ACCEPTED) {
       void sendPageView();
 

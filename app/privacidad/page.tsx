@@ -47,7 +47,8 @@ export default function PrivacidadPage() {
           Si la persona usuaria acepta la analítica, Google Analytics 4 puede tratar
           datos de uso agregados, como visitas, páginas vistas, dispositivo, país
           aproximado, fuente de tráfico y señales de rendimiento editorial. Si se rechaza
-          la analítica, este servicio no se carga.
+          la analítica, se mantiene el consentimiento denegado y no se envían eventos de
+          medición.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Finalidades</h2>
