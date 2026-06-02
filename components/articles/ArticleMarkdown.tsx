@@ -1,7 +1,14 @@
 import { Children, isValidElement, type ReactNode } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ArticleEmbed, getArticleEmbed } from "@/components/articles/ArticleEmbed";
+import {
+  ArticleEmbed,
+  ArticleMedia,
+  getArticleEmbed,
+  getArticleMedia,
+  type MediaDefinition,
+  type MediaType,
+} from "@/components/articles/ArticleEmbed";
 import { ArticleImage } from "@/components/articles/ArticleImage";
 import { ArticleLinkCard } from "@/components/articles/ArticleLinkCard";
 
@@ -10,6 +17,7 @@ type ArticleMarkdownProps = {
 };
 
 const standaloneUrlPattern = /^https?:\/\/[^\s<>"']+$/i;
+const mediaLinkPattern = /^(audio|video)\s*:\s*(.*)$/i;
 
 function getTextContent(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") {
@@ -48,6 +56,34 @@ function getStandaloneUrl(children: ReactNode) {
   return text;
 }
 
+function getStandaloneMediaLink(children: ReactNode): MediaDefinition | null {
+  const childList = Children.toArray(children);
+
+  if (childList.length !== 1) {
+    return null;
+  }
+
+  const onlyChild = childList[0];
+
+  if (!isValidElement<{ children?: ReactNode; href?: string }>(onlyChild)) {
+    return null;
+  }
+
+  const href = onlyChild.props.href;
+
+  if (!href) {
+    return null;
+  }
+
+  const match = getTextContent(onlyChild.props.children).trim().match(mediaLinkPattern);
+
+  if (!match) {
+    return null;
+  }
+
+  return getArticleMedia(href, match[1].toLowerCase() as MediaType, match[2]);
+}
+
 function isExternalHref(href: string) {
   return /^https?:\/\//i.test(href);
 }
@@ -75,9 +111,21 @@ const markdownComponents: Components = {
     />
   ),
   p: ({ children }) => {
+    const standaloneMediaLink = getStandaloneMediaLink(children);
+
+    if (standaloneMediaLink) {
+      return <ArticleMedia media={standaloneMediaLink} />;
+    }
+
     const standaloneUrl = getStandaloneUrl(children);
 
     if (standaloneUrl) {
+      const standaloneMedia = getArticleMedia(standaloneUrl);
+
+      if (standaloneMedia) {
+        return <ArticleMedia media={standaloneMedia} />;
+      }
+
       return getArticleEmbed(standaloneUrl) ? (
         <ArticleEmbed url={standaloneUrl} />
       ) : (

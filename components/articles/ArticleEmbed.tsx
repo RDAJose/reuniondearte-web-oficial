@@ -4,11 +4,25 @@ type ArticleEmbedProps = {
   url: string;
 };
 
+type ArticleMediaProps = {
+  media: MediaDefinition;
+};
+
 type EmbedDefinition = {
   aspectRatio?: string;
   provider: string;
   src: string;
   title: string;
+};
+
+export type MediaType = "audio" | "video";
+
+export type MediaDefinition = {
+  extension: string;
+  mimeType: string;
+  title?: string;
+  type: MediaType;
+  url: string;
 };
 
 const SPOTIFY_TYPES = new Set([
@@ -18,6 +32,19 @@ const SPOTIFY_TYPES = new Set([
   "playlist",
   "show",
   "track",
+]);
+
+const VIDEO_MIME_TYPES = new Map([
+  ["mp4", "video/mp4"],
+  ["mov", "video/quicktime"],
+  ["webm", "video/webm"],
+]);
+
+const AUDIO_MIME_TYPES = new Map([
+  ["m4a", "audio/mp4"],
+  ["mp3", "audio/mpeg"],
+  ["ogg", "audio/ogg"],
+  ["wav", "audio/wav"],
 ]);
 
 function parseHttpUrl(value: string) {
@@ -31,6 +58,12 @@ function parseHttpUrl(value: string) {
   } catch {
     return null;
   }
+}
+
+function getExtension(url: URL) {
+  const fileName = url.pathname.split("/").filter(Boolean).pop() ?? "";
+  const extension = fileName.split(".").pop()?.toLowerCase();
+  return extension && extension !== fileName.toLowerCase() ? extension : null;
 }
 
 function getYouTubeEmbed(url: URL): EmbedDefinition | null {
@@ -144,6 +177,40 @@ export function getArticleEmbed(urlValue: string): EmbedDefinition | null {
   );
 }
 
+export function getArticleMedia(
+  urlValue: string,
+  expectedType?: MediaType,
+  title?: string,
+): MediaDefinition | null {
+  const url = parseHttpUrl(urlValue);
+
+  if (!url) {
+    return null;
+  }
+
+  const extension = getExtension(url);
+
+  if (!extension) {
+    return null;
+  }
+
+  const videoMimeType = VIDEO_MIME_TYPES.get(extension);
+  const audioMimeType = AUDIO_MIME_TYPES.get(extension);
+  const type = videoMimeType ? "video" : audioMimeType ? "audio" : null;
+
+  if (!type || (expectedType && type !== expectedType)) {
+    return null;
+  }
+
+  return {
+    extension,
+    mimeType: videoMimeType ?? audioMimeType ?? "application/octet-stream",
+    title: title?.trim() || undefined,
+    type,
+    url: url.toString(),
+  };
+}
+
 export function ArticleEmbed({ url }: ArticleEmbedProps) {
   const embed = getArticleEmbed(url);
 
@@ -163,5 +230,36 @@ export function ArticleEmbed({ url }: ArticleEmbedProps) {
       />
       <span>{embed.provider}</span>
     </div>
+  );
+}
+
+export function ArticleMedia({ media }: ArticleMediaProps) {
+  const label = media.title ?? (media.type === "video" ? "Video" : "Audio");
+
+  return (
+    <figure className="article-media" data-type={media.type}>
+      {media.type === "video" ? (
+        <video controls preload="metadata">
+          <source src={media.url} type={media.mimeType} />
+          <a href={media.url} rel="noopener noreferrer" target="_blank">
+            Abrir video
+          </a>
+        </video>
+      ) : (
+        <audio controls preload="metadata">
+          <source src={media.url} type={media.mimeType} />
+          <a href={media.url} rel="noopener noreferrer" target="_blank">
+            Abrir audio
+          </a>
+        </audio>
+      )}
+
+      <figcaption>
+        <span>{label}</span>
+        <a href={media.url} rel="noopener noreferrer" target="_blank">
+          Archivo directo
+        </a>
+      </figcaption>
+    </figure>
   );
 }
