@@ -12,8 +12,9 @@ export default async function ArticulosPage() {
       </h1>
 
       <p className="mt-5 max-w-3xl text-lg leading-8 text-stone-700">
-        Archivo editorial limpio de Reunión de Arte. Solo se publican artículos
-        revisados, migrados manualmente y ordenados fuera de WordPress.
+        Lecturas, críticas y ensayos publicados en Reunión de Arte. Un archivo
+        cultural organizado con criterio editorial, pensado para consultar cine,
+        música, arte y libros desde una mirada independiente.
       </p>
 
       {articles.length === 0 ? (
@@ -22,9 +23,9 @@ export default async function ArticulosPage() {
             Archivo en preparación
           </h2>
           <p className="mt-4 leading-7 text-stone-700">
-            La nueva web oficial está preparada para publicar artículos en
-            Markdown con imágenes locales y enlaces. Los textos migrados desde el
-            archivo anterior se irán revisando y publicando de forma selectiva.
+             Estamos preparando nuevas publicaciones revisadas editorialmente. El archivo
+             se irá ampliando de forma progresiva con textos seleccionados y contenidos
+             organizados por áreas culturales.
           </p>
         </div>
       ) : (

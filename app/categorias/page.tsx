@@ -12,8 +12,9 @@ export default async function CategoriasPage() {
       </h1>
 
       <p className="mt-5 max-w-3xl text-lg leading-8 text-stone-700">
-        Archivo editorial organizado por áreas culturales. Cada categoría reúne
-        artículos publicados y revisados manualmente.
+         Explora Reunión de Arte por áreas culturales. Cine, música, arte y libros
+         reunidos en secciones claras para navegar el archivo editorial de forma
+         ordenada.
       </p>
 
       <div className="mt-10 grid gap-x-8 gap-y-6 md:grid-cols-2">
