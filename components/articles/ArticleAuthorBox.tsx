@@ -18,13 +18,15 @@ export function ArticleAuthorBox({ publishedAt }: ArticleAuthorBoxProps) {
         <span className="article-author-box__body">
           <span className="article-author-box__eyebrow">Autor</span>
           <span className="article-author-box__name">{articleAuthor.name}</span>
-          <span className="article-author-box__role">{articleAuthor.role}</span>
-          <span className="article-author-box__bio">{articleAuthor.bio}</span>
-          {readableDate ? (
-            <time className="article-author-box__date" dateTime={publishedAt}>
-              Publicado el {readableDate}
-            </time>
-          ) : null}
+          <span className="article-author-box__meta">
+            <span>{articleAuthor.role}</span>
+            {readableDate ? (
+              <>
+                <span aria-hidden="true">·</span>
+                <time dateTime={publishedAt}>Publicado el {readableDate}</time>
+              </>
+            ) : null}
+          </span>
         </span>
       </Link>
     </aside>
