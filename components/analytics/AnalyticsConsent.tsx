@@ -13,6 +13,8 @@ const LOADING = "loading";
 type ConsentValue = typeof ACCEPTED | typeof REJECTED;
 type ConsentSnapshot = ConsentValue | null | typeof LOADING;
 
+let googleAnalyticsLoadPromise: Promise<void> | null = null;
+let isGoogleAnalyticsConfigured = false;
 let lastTrackedPage: string | null = null;
 
 declare global {
@@ -59,7 +61,7 @@ function getServerConsentSnapshot(): ConsentSnapshot {
   return LOADING;
 }
 
-function prepareGoogleAnalytics() {
+function prepareGoogleAnalyticsGlobals() {
   window.dataLayer = window.dataLayer ?? [];
   window.gtag =
     window.gtag ??
@@ -74,29 +76,64 @@ function prepareGoogleAnalytics() {
     analytics_storage: "granted",
   });
   window.gtag("set", "allow_ad_personalization_signals", false);
-  window.gtag("js", new Date());
-  window.gtag("config", GA_MEASUREMENT_ID, {
+}
+
+function configureGoogleAnalytics() {
+  if (isGoogleAnalyticsConfigured) {
+    return;
+  }
+
+  isGoogleAnalyticsConfigured = true;
+  window.gtag?.("js", new Date());
+  window.gtag?.("config", GA_MEASUREMENT_ID, {
+    allow_ad_personalization_signals: false,
+    allow_google_signals: false,
     send_page_view: false,
   });
 }
 
-function loadGoogleAnalytics() {
-  prepareGoogleAnalytics();
+function ensureGoogleAnalyticsLoaded() {
+  prepareGoogleAnalyticsGlobals();
 
-  if (document.getElementById("google-analytics-gtag")) {
-    return;
+  if (googleAnalyticsLoadPromise) {
+    return googleAnalyticsLoadPromise;
   }
 
-  const script = document.createElement("script");
-  script.async = true;
-  script.id = "google-analytics-gtag";
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-  document.head.appendChild(script);
+  googleAnalyticsLoadPromise = new Promise((resolve) => {
+    const existingScript = document.getElementById(
+      "google-analytics-gtag",
+    ) as HTMLScriptElement | null;
+
+    if (existingScript?.dataset.loaded === "true") {
+      configureGoogleAnalytics();
+      resolve();
+      return;
+    }
+
+    const script = existingScript ?? document.createElement("script");
+
+    script.async = true;
+    script.id = "google-analytics-gtag";
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    script.addEventListener(
+      "load",
+      () => {
+        script.dataset.loaded = "true";
+        configureGoogleAnalytics();
+        resolve();
+      },
+      { once: true },
+    );
+
+    if (!existingScript) {
+      document.head.appendChild(script);
+    }
+  });
+
+  return googleAnalyticsLoadPromise;
 }
 
-function trackPageView() {
-  loadGoogleAnalytics();
-
+async function sendPageView() {
   const pagePath = `${window.location.pathname}${window.location.search}`;
   const pageLocation = window.location.href;
 
@@ -105,6 +142,8 @@ function trackPageView() {
   }
 
   lastTrackedPage = pageLocation;
+
+  await ensureGoogleAnalyticsLoaded();
 
   window.gtag?.("event", "page_view", {
     page_location: pageLocation,
@@ -122,10 +161,12 @@ export function AnalyticsConsent() {
 
   useEffect(() => {
     if (consent === ACCEPTED) {
-      trackPageView();
+      void sendPageView();
 
       const queuePageView = () => {
-        window.setTimeout(trackPageView, 0);
+        window.setTimeout(() => {
+          void sendPageView();
+        }, 0);
       };
       const originalPushState = window.history.pushState;
       const originalReplaceState = window.history.replaceState;
@@ -158,7 +199,7 @@ export function AnalyticsConsent() {
 
   function acceptAnalytics() {
     storeConsent(ACCEPTED);
-    trackPageView();
+    void sendPageView();
   }
 
   function rejectAnalytics() {
