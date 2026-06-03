@@ -74,7 +74,7 @@ export default async function Home() {
               {leadImage ? (
                 <Link
                   href={`/articulos/${leadArticle.slug}`}
-                  className="relative aspect-[4/3] w-full min-w-0 overflow-hidden bg-stone-100 md:order-2"
+                  className="article-lead-media relative aspect-[4/3] w-full min-w-0 overflow-hidden md:order-2"
                   aria-label={leadArticle.title}
                 >
                   <Image
@@ -83,7 +83,7 @@ export default async function Home() {
                     fill
                     preload
                     sizes="(min-width: 1024px) 400px, (min-width: 768px) 46vw, 100vw"
-                    className="object-cover"
+                    className="article-lead-media__img"
                   />
                 </Link>
               ) : null}

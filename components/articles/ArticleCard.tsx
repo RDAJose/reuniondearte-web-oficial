@@ -25,7 +25,7 @@ export function ArticleCard({
     <article className="group min-w-0 border-t border-stone-300 bg-[#fffdf8] pt-4">
       {image ? (
         <Link href={href} className="block" aria-label={article.title}>
-          <div className="relative aspect-[4/3] w-full min-w-0 overflow-hidden bg-stone-100 sm:aspect-[16/10]">
+          <div className="article-card-media relative aspect-[4/3] w-full min-w-0 overflow-hidden sm:aspect-[16/10]">
             <Image
               src={image}
               alt={imageAlt}
@@ -37,7 +37,7 @@ export function ArticleCard({
                   ? "(min-width: 1024px) 340px, (min-width: 768px) 50vw, 100vw"
                   : "(min-width: 1024px) 520px, (min-width: 768px) 50vw, 100vw"
               }
-              className="object-cover transition duration-500 group-hover:scale-[1.03]"
+              className="article-card-media__img"
             />
           </div>
         </Link>

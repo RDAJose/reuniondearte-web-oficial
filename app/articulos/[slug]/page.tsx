@@ -147,7 +147,7 @@ export default async function ArticleDetailPage({
                 fill
                 preload
                 sizes="(min-width: 1120px) 1088px, (min-width: 768px) calc(100vw - 2.5rem), 100vw"
-                className="object-cover"
+                className="article-cover__img"
               />
             </div>
             {coverCaption || coverCredit ? (
