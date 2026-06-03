@@ -581,6 +581,16 @@ a {
   border: 0;
 }
 
+@supports (aspect-ratio: 16 / 9) {
+  .article-embed[data-aspect="video"] {
+    aspect-ratio: 16 / 9;
+  }
+
+  .article-embed[data-aspect="video"]::before {
+    display: none;
+  }
+}
+
 .article-embed span {
   position: absolute;
   right: 0.75rem;

@@ -47,6 +47,8 @@ const AUDIO_MIME_TYPES = new Map([
   ["wav", "audio/wav"],
 ]);
 
+const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{6,}$/;
+
 function parseHttpUrl(value: string) {
   try {
     const url = new URL(value.trim());
@@ -68,30 +70,56 @@ function getExtension(url: URL) {
 
 function getYouTubeEmbed(url: URL): EmbedDefinition | null {
   const host = url.hostname.replace(/^www\./, "");
+  const pathParts = url.pathname.split("/").filter(Boolean);
   let videoId: string | null = null;
+  let playlistId: string | null = null;
 
   if (host === "youtu.be") {
-    videoId = url.pathname.split("/").filter(Boolean)[0] ?? null;
+    videoId = pathParts[0] ?? null;
   }
 
   if (host === "youtube.com" || host === "m.youtube.com") {
     if (url.pathname === "/watch") {
       videoId = url.searchParams.get("v");
+    } else if (url.pathname === "/playlist") {
+      playlistId = url.searchParams.get("list");
     } else {
-      const [section, id] = url.pathname.split("/").filter(Boolean);
-      if (section === "shorts" || section === "embed") {
+      const [section, id] = pathParts;
+      if (section === "embed" && id === "videoseries") {
+        playlistId = url.searchParams.get("list");
+      } else if (section === "shorts" || section === "embed") {
         videoId = id ?? null;
       }
     }
   }
 
-  if (!videoId || !/^[A-Za-z0-9_-]{6,}$/.test(videoId)) {
+  if (host === "youtube-nocookie.com") {
+    const [section, id] = pathParts;
+
+    if (section === "embed" && id === "videoseries") {
+      playlistId = url.searchParams.get("list");
+    } else if (section === "embed") {
+      videoId = id ?? null;
+    }
+  }
+
+  if (playlistId && YOUTUBE_ID_PATTERN.test(playlistId)) {
+    return {
+      provider: "YouTube",
+      src: `https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(
+        playlistId,
+      )}`,
+      title: "Lista de reproducción de YouTube",
+    };
+  }
+
+  if (!videoId || !YOUTUBE_ID_PATTERN.test(videoId)) {
     return null;
   }
 
   return {
     provider: "YouTube",
-    src: `https://www.youtube-nocookie.com/embed/${videoId}`,
+    src: `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}`,
     title: "Video de YouTube",
   };
 }
@@ -221,7 +249,7 @@ export function ArticleEmbed({ url }: ArticleEmbedProps) {
   return (
     <div className="article-embed" data-aspect={embed.aspectRatio ?? "video"}>
       <iframe
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
         loading="lazy"
         referrerPolicy="strict-origin-when-cross-origin"
