@@ -1,7 +1,6 @@
 import { siteConfig } from "@/lib/config/site";
 
-const LAST_UPDATED = "2 de junio de 2026";
-const PENDING_VALUE = "PENDIENTE_DE_COMPLETAR";
+const LAST_UPDATED = "3 de junio de 2026";
 
 export default function PrivacidadPage() {
   return (
@@ -17,14 +16,15 @@ export default function PrivacidadPage() {
         </p>
         <p>
           Esta política explica cómo se tratan los datos personales y técnicos asociados
-          al uso de {siteConfig.name}, revista cultural independiente sobre cine, música,
-          arte, libros y pensamiento visual.
+          al uso de {siteConfig.name}, proyecto editorial cultural con actividad
+          profesional y económica sobre cine, música, arte, libros y pensamiento visual.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Responsable</h2>
         <p>Responsable del tratamiento: {siteConfig.author}.</p>
         <p>Email de contacto: {siteConfig.email}.</p>
-        <p>NIF y domicilio: {PENDING_VALUE}.</p>
+        <p>NIF: 76441876L.</p>
+        <p>Domicilio: Granada, España.</p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Datos tratados</h2>
         <p>
@@ -47,9 +47,14 @@ export default function PrivacidadPage() {
           Si la persona usuaria acepta la analítica, Google Analytics 4 puede tratar
           datos de uso agregados, como visitas, páginas vistas, dispositivo, país
           aproximado, fuente de tráfico y señales de rendimiento editorial. Si se rechaza
-          la analítica, se mantiene el consentimiento denegado y no se envían eventos de
-          medición. La etiqueta de Google puede cargarse con consentimiento denegado por
-          defecto.
+          la analítica o no existe una decisión previa, no se descarga Google Analytics 4
+          ni se envían page_view u otros eventos de medición.
+        </p>
+        <p>
+          El Consent Mode se mantiene por defecto con analytics_storage, ad_storage,
+          ad_user_data y ad_personalization denegados. Al aceptar la analítica solo se
+          concede analytics_storage. No hay Google Tag Manager, Google Ads, remarketing
+          ni publicidad activa.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Finalidades</h2>
@@ -73,7 +78,7 @@ export default function PrivacidadPage() {
         <p>
           La analítica opcional con Google Analytics 4 se basa exclusivamente en el
           consentimiento previo. Puede rechazarse desde el banner sin impedir el acceso a
-          la web.
+          la web y revisarse posteriormente desde la política de cookies.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Conservación</h2>
@@ -97,7 +102,8 @@ export default function PrivacidadPage() {
         </p>
         <p>
           Si se acepta la analítica, interviene Google como proveedor de Google Analytics
-          4. No se activa publicidad, remarketing, Google Ads ni Google Tag Manager.
+          4. No interviene si se rechaza o no se ha tomado una decisión. No se activa
+          publicidad, remarketing, Google Ads ni Google Tag Manager.
         </p>
         <p>
           Estos proveedores pueden operar desde fuera del Espacio Económico Europeo o
@@ -128,6 +134,14 @@ export default function PrivacidadPage() {
           No introduzcas datos sensibles, información privada de terceros ni datos que no
           quieras hacer públicos en los comentarios. Los comentarios aprobados se
           mostrarán de forma visible en la web.
+        </p>
+
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
+          Colaboraciones y monetización
+        </h2>
+        <p>
+          Cualquier colaboración comercial, contenido patrocinado, publicidad o enlace de
+          afiliación se identificará claramente cuando exista.
         </p>
       </div>
     </section>

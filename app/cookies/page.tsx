@@ -1,6 +1,7 @@
-﻿import { siteConfig } from "@/lib/config/site";
+import { AnalyticsConsentSettings } from "@/components/analytics/AnalyticsConsentSettings";
+import { siteConfig } from "@/lib/config/site";
 
-const LAST_UPDATED = "2 de junio de 2026";
+const LAST_UPDATED = "3 de junio de 2026";
 
 export default function CookiesPage() {
   return (
@@ -12,13 +13,13 @@ export default function CookiesPage() {
 
       <div className="mt-8 space-y-6 border-t border-stone-300 pt-6 leading-8 text-stone-700">
         <p>
-          Ãšltima actualización: <strong>{LAST_UPDATED}</strong>.
+          Última actualización: <strong>{LAST_UPDATED}</strong>.
         </p>
         <p>
           {siteConfig.name} puede usar Google Analytics 4 solo si la persona usuaria
           acepta expresamente la analítica. Si se rechaza o no existe una decisión
-          previa, la analítica permanece desactivada y no se envían páginas vistas.
-          La etiqueta de Google puede cargarse con consentimiento denegado por defecto.
+          previa, la analítica permanece desactivada, no se descarga GA4 y no se envían
+          páginas vistas ni eventos de medición.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
@@ -37,6 +38,12 @@ export default function CookiesPage() {
           no implica por sí misma el uso de cookies de Google.
         </p>
         <p>
+          El Consent Mode se configura con almacenamiento de analítica, publicidad, datos
+          de usuario publicitarios y personalización publicitaria denegados por defecto.
+          Al aceptar la analítica solo se concede analytics_storage; no se concede
+          almacenamiento publicitario ni personalización de anuncios.
+        </p>
+        <p>
           El navegador o los proveedores de alojamiento pueden usar elementos técnicos
           necesarios para servir la página, seguridad, disponibilidad o registro técnico
           básico.
@@ -52,10 +59,19 @@ export default function CookiesPage() {
           No se activa publicidad, remarketing, Google Ads ni Google Tag Manager.
         </p>
         <p>
-          Si se rechaza la analítica, se mantiene el consentimiento denegado y no se
-          envían eventos de medición. La decisión puede modificarse borrando el
-          almacenamiento local del navegador para este sitio.
+          Si se rechaza la analítica, se mantiene el consentimiento denegado y no se carga
+          Google Analytics 4 ni se envían eventos de medición.
         </p>
+
+        <h2 className="font-serif text-2xl font-bold text-stone-950">
+          Cambiar o revocar la decisión
+        </h2>
+        <p>
+          Puedes revisar tu decisión de analítica en cualquier momento. Esta acción borra
+          la preferencia local rda:analytics-consent, vuelve a denegar analytics_storage
+          si ya se había aceptado y permite elegir de nuevo desde el banner.
+        </p>
+        <AnalyticsConsentSettings />
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
           Servicios externos y embeds
@@ -71,8 +87,8 @@ export default function CookiesPage() {
           Gestión en el navegador
         </h2>
         <p>
-          Puedes borrar localStorage y cookies desde la configuración de privacidad de
-          tu navegador. Al hacerlo, el estado local de los likes puede reiniciarse.
+          Puedes borrar localStorage y cookies desde la configuración de privacidad de tu
+          navegador. Al hacerlo, el estado local de los likes puede reiniciarse.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
@@ -116,7 +132,7 @@ export default function CookiesPage() {
               <tr className="border-b border-stone-200">
                 <td className="py-3 pr-4">rda:article-liked:slug</td>
                 <td className="py-3 pr-4">{siteConfig.name}</td>
-                <td className="py-3 pr-4">Recordar si un artículo fue marcado con â€œme gustaâ€.</td>
+                <td className="py-3 pr-4">Recordar si un artículo fue marcado con “me gusta”.</td>
                 <td className="py-3 pr-4">Hasta borrado del navegador/localStorage.</td>
                 <td className="py-3 pr-4">localStorage funcional.</td>
               </tr>
@@ -134,4 +150,3 @@ export default function CookiesPage() {
     </section>
   );
 }
-

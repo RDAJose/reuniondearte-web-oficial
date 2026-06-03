@@ -1,7 +1,6 @@
 import { siteConfig } from "@/lib/config/site";
 
-const LAST_UPDATED = "1 de junio de 2026";
-const PENDING_VALUE = "PENDIENTE_DE_COMPLETAR";
+const LAST_UPDATED = "3 de junio de 2026";
 
 export default function AvisoLegalPage() {
   return (
@@ -16,22 +15,22 @@ export default function AvisoLegalPage() {
           Última actualización: <strong>{LAST_UPDATED}</strong>.
         </p>
         <p>
-          {siteConfig.name} es una revista/web cultural dedicada a cine, música, arte,
-          crítica, libros y cultura.
+          {siteConfig.name} es un proyecto editorial cultural con actividad profesional
+          y económica dedicado a cine, música, arte, crítica, libros y cultura.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Titularidad</h2>
         <p>Titular del sitio web: {siteConfig.author}.</p>
         <p>Email: {siteConfig.email}.</p>
         <p>Dominio: reuniondearte.com.</p>
-        <p>NIF: {PENDING_VALUE}.</p>
-        <p>Domicilio: {PENDING_VALUE}.</p>
+        <p>NIF: 76441876L.</p>
+        <p>Domicilio: Granada, España.</p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Uso del sitio</h2>
         <p>
-          El acceso a esta web tiene carácter informativo, cultural y editorial. La
-          persona usuaria se compromete a utilizar el sitio de forma lícita, respetuosa
-          y coherente con su finalidad.
+          El acceso a esta web tiene carácter informativo, cultural, editorial y
+          profesional. La persona usuaria se compromete a utilizar el sitio de forma
+          lícita, respetuosa y coherente con su finalidad.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
@@ -48,9 +47,9 @@ export default function AvisoLegalPage() {
           Imágenes y materiales externos
         </h2>
         <p>
-          Las imágenes y materiales visuales pueden ser propios, autorizados,
-          procedentes de press kit, dominio público, licencias compatibles o fuentes
-          citadas. Si detectas un posible problema de derechos, puedes escribir a{" "}
+          Las imágenes y materiales visuales pueden ser propios, autorizados, procedentes
+          de press kit, dominio público, licencias compatibles o fuentes citadas. Si
+          detectas un posible problema de derechos, puedes escribir a{" "}
           <a className="font-semibold text-stone-950 underline" href={`mailto:${siteConfig.email}`}>
             {siteConfig.email}
           </a>{" "}
@@ -73,6 +72,10 @@ export default function AvisoLegalPage() {
           contenido ilegal, ofensivo, discriminatorio, ajeno al tema o contrario al tono
           editorial del sitio.
         </p>
+        <p>
+          No introduzcas datos sensibles, información privada de terceros ni datos que no
+          quieras hacer públicos en los comentarios.
+        </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
           Comunicaciones y retirada de contenidos
@@ -83,14 +86,14 @@ export default function AvisoLegalPage() {
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
-          Monetización futura
+          Monetización y colaboraciones
         </h2>
         <p>
           La web puede aceptar propuestas editoriales, culturales, de prensa, festivales,
-          colaboraciones, patrocinios, publicidad o afiliación en el futuro. Cualquier
-          contenido patrocinado, colaboración comercial o enlace afiliado se identificará
-          de forma clara cuando exista. Actualmente no se activan anuncios, pagos,
-          afiliados ni scripts publicitarios desde este aviso.
+          colaboraciones, patrocinios, publicidad o afiliación. Cualquier contenido
+          patrocinado, colaboración comercial, anuncio o enlace afiliado se identificará
+          de forma clara cuando exista. Actualmente no hay Google Ads, remarketing ni
+          publicidad activa.
         </p>
       </div>
     </section>

@@ -152,6 +152,43 @@ a {
   background: var(--accent);
 }
 
+.privacy-settings {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 34rem;
+}
+
+.privacy-settings button {
+  width: fit-content;
+  border: 1px solid #181713;
+  background: #181713;
+  color: #fffdf8;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 0.8rem 0.95rem;
+  text-transform: uppercase;
+}
+
+.privacy-settings button:hover,
+.privacy-settings button:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent);
+  outline: none;
+}
+
+.privacy-settings p {
+  margin: 0;
+  border-left: 3px solid var(--accent);
+  padding-left: 0.85rem;
+  color: #44403c;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
 .home-article-flow {
   display: grid;
   gap: 2rem;

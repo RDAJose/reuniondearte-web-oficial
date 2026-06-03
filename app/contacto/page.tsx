@@ -1,6 +1,6 @@
 import { siteConfig } from "@/lib/config/site";
 
-const LAST_UPDATED = "1 de junio de 2026";
+const LAST_UPDATED = "3 de junio de 2026";
 
 export default function ContactoPage() {
   return (
@@ -17,7 +17,8 @@ export default function ContactoPage() {
         <p>
           Para contacto editorial, prensa, festivales, críticas, colaboraciones,
           derechos de imagen o contenido, privacidad, datos personales, propuestas
-          culturales y posibles patrocinios futuros, escribe a:
+          culturales, patrocinio o publicidad claramente identificados cuando existan,
+          escribe a:
         </p>
         <p>
           <a className="font-semibold text-stone-950 underline" href={`mailto:${siteConfig.email}`}>
@@ -35,13 +36,13 @@ export default function ContactoPage() {
         </ul>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">
-          Colaboraciones y monetización futura
+          Colaboraciones y monetización
         </h2>
         <p>
           {siteConfig.name} puede estudiar propuestas editoriales, culturales, de prensa,
-          festivales, colaboraciones y patrocinios. Cualquier colaboración comercial,
-          contenido patrocinado o enlace afiliado se identificará claramente cuando
-          exista. No hay pagos, anuncios ni afiliación activos desde esta página.
+          festivales, colaboraciones, publicidad y patrocinios. Cualquier colaboración
+          comercial, contenido patrocinado o enlace afiliado se identificará claramente
+          cuando exista. No hay anuncios ni afiliación activos desde esta página.
         </p>
 
         <h2 className="font-serif text-2xl font-bold text-stone-950">Sin formulario</h2>
