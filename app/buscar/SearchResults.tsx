@@ -83,7 +83,12 @@ export function SearchResults({ articles }: SearchResultsProps) {
 
   return (
     <>
-      <form action="/buscar" className="mt-8 max-w-2xl" role="search">
+      <form
+        action="/buscar"
+        autoComplete="off"
+        className="mt-8 max-w-2xl"
+        role="search"
+      >
         <label
           className="text-sm font-bold uppercase tracking-[0.06em] text-stone-600"
           htmlFor="search-page-query"
@@ -92,11 +97,14 @@ export function SearchResults({ articles }: SearchResultsProps) {
         </label>
         <div className="mt-3 flex min-w-0 flex-col gap-3 sm:flex-row">
           <input
+            autoComplete="off"
+            autoCorrect="off"
             className="min-h-11 min-w-0 flex-1 border border-stone-300 bg-transparent px-3 py-2 text-base text-stone-950 outline-none transition placeholder:text-stone-500 focus:border-stone-700"
             defaultValue={query}
             id="search-page-query"
             name="q"
             placeholder="Título, tema, categoría o palabra clave"
+            spellCheck={false}
             type="search"
           />
           <button

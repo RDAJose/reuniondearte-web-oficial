@@ -32,14 +32,18 @@ export function SiteHeader() {
 
           <form
             action="/buscar"
+            autoComplete="off"
             className="relative w-full min-w-0 md:w-44 lg:w-52"
             role="search"
           >
             <input
               aria-label="Buscar artículos"
+              autoComplete="off"
+              autoCorrect="off"
               className="h-9 w-full border border-stone-300 bg-transparent py-1.5 pl-3 pr-9 text-sm font-medium text-stone-950 outline-none transition placeholder:text-stone-500 focus:border-stone-700"
               name="q"
               placeholder="Buscar"
+              spellCheck={false}
               type="search"
             />
             <button
