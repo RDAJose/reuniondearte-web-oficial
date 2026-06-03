@@ -30,8 +30,13 @@ export function ArticleCard({
               src={image}
               alt={imageAlt}
               fill
-              priority={priority}
-              sizes="(min-width: 1024px) 520px, (min-width: 768px) 50vw, 100vw"
+              fetchPriority={priority ? "high" : "auto"}
+              loading={priority ? "eager" : "lazy"}
+              sizes={
+                isCompact
+                  ? "(min-width: 1024px) 340px, (min-width: 768px) 50vw, 100vw"
+                  : "(min-width: 1024px) 520px, (min-width: 768px) 50vw, 100vw"
+              }
               className="object-cover transition duration-500 group-hover:scale-[1.03]"
             />
           </div>

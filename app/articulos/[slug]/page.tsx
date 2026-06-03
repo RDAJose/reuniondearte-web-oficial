@@ -145,8 +145,8 @@ export default async function ArticleDetailPage({
                 src={coverImage}
                 alt={coverAlt}
                 fill
-                priority
-                sizes="(min-width: 1024px) 960px, 100vw"
+                preload
+                sizes="(min-width: 1120px) 1088px, (min-width: 768px) calc(100vw - 2.5rem), 100vw"
                 className="object-cover"
               />
             </div>

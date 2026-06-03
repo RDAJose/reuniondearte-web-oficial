@@ -1,10 +1,11 @@
 ﻿"use client";
 
 import { useEffect, useSyncExternalStore } from "react";
-import Link from "next/link";
 
 const CONSENT_STORAGE_KEY = "rda:analytics-consent";
 const CONSENT_CHANGE_EVENT = "rda:analytics-consent-change";
+const GA_MEASUREMENT_ID = "G-021Z217Z8C";
+const GA_SCRIPT_ID = "google-analytics-gtag";
 const ACCEPTED = "accepted";
 const REJECTED = "rejected";
 const LOADING = "loading";
@@ -13,6 +14,10 @@ type ConsentValue = typeof ACCEPTED | typeof REJECTED;
 type ConsentSnapshot = ConsentValue | null | typeof LOADING;
 
 let lastTrackedPage: string | null = null;
+let pendingTrackedPage: string | null = null;
+let googleAnalyticsLoadPromise: Promise<void> | null = null;
+let googleAnalyticsConfigured = false;
+let defaultConsentConfigured = false;
 
 declare global {
   interface Window {
@@ -67,37 +72,131 @@ function ensureGoogleTag() {
     };
 }
 
-function grantAnalyticsConsent() {
+function configureDefaultConsent() {
   ensureGoogleTag();
+
+  if (defaultConsentConfigured) {
+    return;
+  }
+
+  window.gtag?.("consent", "default", {
+    analytics_storage: "denied",
+    ad_personalization: "denied",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+  });
+
+  defaultConsentConfigured = true;
+}
+
+function configureGoogleAnalytics() {
+  if (googleAnalyticsConfigured) {
+    return;
+  }
+
+  window.gtag?.("js", new Date());
+  window.gtag?.("config", GA_MEASUREMENT_ID, {
+    allow_ad_personalization_signals: false,
+    allow_google_signals: false,
+    send_page_view: false,
+  });
+
+  googleAnalyticsConfigured = true;
+}
+
+function ensureGoogleAnalyticsLoaded() {
+  if (googleAnalyticsLoadPromise) {
+    return googleAnalyticsLoadPromise;
+  }
+
+  configureDefaultConsent();
+
+  googleAnalyticsLoadPromise = new Promise((resolve, reject) => {
+    const existingScript = document.getElementById(
+      GA_SCRIPT_ID,
+    ) as HTMLScriptElement | null;
+
+    if (existingScript?.dataset.loaded === "true") {
+      configureGoogleAnalytics();
+      resolve();
+      return;
+    }
+
+    const script = existingScript ?? document.createElement("script");
+
+    script.id = GA_SCRIPT_ID;
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+
+    script.addEventListener(
+      "load",
+      () => {
+        script.dataset.loaded = "true";
+        configureGoogleAnalytics();
+        resolve();
+      },
+      { once: true },
+    );
+
+    script.addEventListener(
+      "error",
+      () => {
+        googleAnalyticsLoadPromise = null;
+        reject(new Error("Google Analytics could not be loaded."));
+      },
+      { once: true },
+    );
+
+    if (!existingScript) {
+      document.head.appendChild(script);
+    }
+  });
+
+  return googleAnalyticsLoadPromise;
+}
+
+function grantAnalyticsConsent() {
+  configureDefaultConsent();
   window.gtag?.("consent", "update", {
     analytics_storage: "granted",
   });
 }
 
 function denyAnalyticsConsent() {
-  ensureGoogleTag();
+  configureDefaultConsent();
   window.gtag?.("consent", "update", {
     analytics_storage: "denied",
   });
 }
 
-function sendPageView() {
+async function sendPageView() {
   const pagePath = `${window.location.pathname}${window.location.search}`;
   const pageLocation = window.location.href;
 
-  if (lastTrackedPage === pageLocation) {
+  if (lastTrackedPage === pageLocation || pendingTrackedPage === pageLocation) {
     return;
   }
 
+  pendingTrackedPage = pageLocation;
   grantAnalyticsConsent();
 
-  window.gtag?.("event", "page_view", {
-    page_location: pageLocation,
-    page_path: pagePath,
-    page_title: document.title,
-  });
+  try {
+    await ensureGoogleAnalyticsLoaded();
 
-  lastTrackedPage = pageLocation;
+    window.gtag?.("event", "page_view", {
+      page_location: pageLocation,
+      page_path: pagePath,
+      page_title: document.title,
+    });
+
+    lastTrackedPage = pageLocation;
+  } catch {
+    // Keep navigation unaffected if analytics is blocked or unavailable.
+  } finally {
+    if (pendingTrackedPage === pageLocation) {
+      pendingTrackedPage = null;
+    }
+  }
 }
 
 export function AnalyticsConsent() {
@@ -173,7 +272,7 @@ export function AnalyticsConsent() {
           Usamos Google Analytics 4 solo si aceptas, para medir visitas y mejorar
           el archivo editorial. Puedes rechazarlo sin afectar a la navegación.
         </p>
-        <Link href="/cookies">Política de cookies</Link>
+        <a href="/cookies">Política de cookies</a>
       </div>
 
       <div className="analytics-consent__actions">

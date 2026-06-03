@@ -81,8 +81,8 @@ export default async function Home() {
                     src={leadImage}
                     alt={leadImageAlt}
                     fill
-                    priority
-                    sizes="(min-width: 1024px) 520px, 100vw"
+                    preload
+                    sizes="(min-width: 1024px) 400px, (min-width: 768px) 46vw, 100vw"
                     className="object-cover"
                   />
                 </Link>
