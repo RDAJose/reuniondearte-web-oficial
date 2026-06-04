@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useSyncExternalStore } from "react";
 
@@ -42,11 +42,11 @@ function logAnalytics(message: string, details?: Record<string, unknown>) {
   }
 
   if (details) {
-    console.info(`[RDA analytics] ${message}`, details);
+    console.info(`[RDA Analytics] ${message}`, details);
     return;
   }
 
-  console.info(`[RDA analytics] ${message}`);
+  console.info(`[RDA Analytics] ${message}`);
 }
 
 function getStoredConsent(): ConsentValue | null {
@@ -104,7 +104,7 @@ function getConsentSnapshot(): ConsentSnapshot {
 }
 
 function getServerConsentSnapshot(): ConsentSnapshot {
-  return LOADING;
+  return null;
 }
 
 function ensureGoogleTag() {
@@ -178,7 +178,7 @@ function ensureGoogleAnalyticsLoaded() {
     script.id = GA_SCRIPT_ID;
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-    logAnalytics("loading GA script", {
+    logAnalytics(`loading GA4 ${GA_MEASUREMENT_ID}`, {
       measurementId: GA_MEASUREMENT_ID,
       src: script.src,
     });
@@ -284,11 +284,12 @@ export function AnalyticsConsent() {
 
   useEffect(() => {
     registerAnalyticsStatus();
+    logAnalytics("component mounted");
   }, []);
 
   useEffect(() => {
     if (consent !== LOADING) {
-      logAnalytics("consent detected", {
+      logAnalytics("consent state:", {
         consent,
         measurementId: GA_MEASUREMENT_ID,
       });
@@ -355,6 +356,7 @@ export function AnalyticsConsent() {
     <section
       aria-label="Consentimiento de analítica"
       className="analytics-consent"
+      data-rda-analytics-consent="true"
     >
       <div className="analytics-consent__body">
         <p>
