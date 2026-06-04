@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArticleCard } from "@/components/articles/ArticleCard";
+import { NewsletterSignup } from "@/components/newsletter/NewsletterSignup";
 import { getPublishedArticles } from "@/lib/articles/articles";
 import { formatArticleDate } from "@/lib/articles/dates";
 import { getArticleImage, getArticleImageAlt } from "@/lib/articles/media";
@@ -185,6 +186,10 @@ export default async function Home() {
             </Link>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-5 sm:py-12">
+        <NewsletterSignup />
       </section>
 
       {articleFeed.length > 0 ? (
