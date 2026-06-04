@@ -23,7 +23,30 @@ declare global {
   interface Window {
     dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
+    rdaAnalyticsStatus?: () => {
+      consent: ConsentValue | null;
+      gtagReady: boolean;
+      measurementId: string;
+      scriptLoaded: boolean;
+    };
   }
+}
+
+function isDevelopment() {
+  return process.env.NODE_ENV !== "production";
+}
+
+function logAnalytics(message: string, details?: Record<string, unknown>) {
+  if (!isDevelopment()) {
+    return;
+  }
+
+  if (details) {
+    console.info(`[RDA analytics] ${message}`, details);
+    return;
+  }
+
+  console.info(`[RDA analytics] ${message}`);
 }
 
 function getStoredConsent(): ConsentValue | null {
@@ -43,6 +66,27 @@ function storeConsent(value: ConsentValue) {
   }
 
   window.dispatchEvent(new Event(CONSENT_CHANGE_EVENT));
+}
+
+function getGoogleAnalyticsScript() {
+  return document.getElementById(GA_SCRIPT_ID) as HTMLScriptElement | null;
+}
+
+function registerAnalyticsStatus() {
+  if (!isDevelopment()) {
+    return;
+  }
+
+  window.rdaAnalyticsStatus = () => {
+    const script = getGoogleAnalyticsScript();
+
+    return {
+      consent: getStoredConsent(),
+      gtagReady: typeof window.gtag === "function",
+      measurementId: GA_MEASUREMENT_ID,
+      scriptLoaded: script?.dataset.loaded === "true",
+    };
+  };
 }
 
 function subscribeToConsent(callback: () => void) {
@@ -84,9 +128,14 @@ function configureDefaultConsent() {
     ad_personalization: "denied",
     ad_storage: "denied",
     ad_user_data: "denied",
+    personalization_storage: "denied",
   });
 
   defaultConsentConfigured = true;
+  logAnalytics("default consent configured", {
+    analytics_storage: "denied",
+    measurementId: GA_MEASUREMENT_ID,
+  });
 }
 
 function configureGoogleAnalytics() {
@@ -102,6 +151,10 @@ function configureGoogleAnalytics() {
   });
 
   googleAnalyticsConfigured = true;
+  logAnalytics("GA configured", {
+    measurementId: GA_MEASUREMENT_ID,
+    send_page_view: false,
+  });
 }
 
 function ensureGoogleAnalyticsLoaded() {
@@ -112,9 +165,7 @@ function ensureGoogleAnalyticsLoaded() {
   configureDefaultConsent();
 
   googleAnalyticsLoadPromise = new Promise((resolve, reject) => {
-    const existingScript = document.getElementById(
-      GA_SCRIPT_ID,
-    ) as HTMLScriptElement | null;
+    const existingScript = getGoogleAnalyticsScript();
 
     if (existingScript?.dataset.loaded === "true") {
       configureGoogleAnalytics();
@@ -127,11 +178,18 @@ function ensureGoogleAnalyticsLoaded() {
     script.id = GA_SCRIPT_ID;
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    logAnalytics("loading GA script", {
+      measurementId: GA_MEASUREMENT_ID,
+      src: script.src,
+    });
 
     script.addEventListener(
       "load",
       () => {
         script.dataset.loaded = "true";
+        logAnalytics("GA script loaded", {
+          measurementId: GA_MEASUREMENT_ID,
+        });
         configureGoogleAnalytics();
         resolve();
       },
@@ -160,13 +218,25 @@ function grantAnalyticsConsent() {
   window.gtag?.("consent", "update", {
     analytics_storage: "granted",
   });
+  logAnalytics("consent updated", {
+    analytics_storage: "granted",
+    measurementId: GA_MEASUREMENT_ID,
+  });
 }
 
 function denyAnalyticsConsent() {
-  configureDefaultConsent();
   window.gtag?.("consent", "update", {
     analytics_storage: "denied",
   });
+  logAnalytics("consent updated", {
+    analytics_storage: "denied",
+    measurementId: GA_MEASUREMENT_ID,
+  });
+}
+
+function resetPageViewState() {
+  lastTrackedPage = null;
+  pendingTrackedPage = null;
 }
 
 async function sendPageView() {
@@ -178,12 +248,18 @@ async function sendPageView() {
   }
 
   pendingTrackedPage = pageLocation;
-  grantAnalyticsConsent();
 
   try {
     await ensureGoogleAnalyticsLoaded();
+    grantAnalyticsConsent();
 
     window.gtag?.("event", "page_view", {
+      page_location: pageLocation,
+      page_path: pagePath,
+      page_title: document.title,
+    });
+    logAnalytics("page_view sent", {
+      measurementId: GA_MEASUREMENT_ID,
       page_location: pageLocation,
       page_path: pagePath,
       page_title: document.title,
@@ -207,6 +283,17 @@ export function AnalyticsConsent() {
   );
 
   useEffect(() => {
+    registerAnalyticsStatus();
+  }, []);
+
+  useEffect(() => {
+    if (consent !== LOADING) {
+      logAnalytics("consent detected", {
+        consent,
+        measurementId: GA_MEASUREMENT_ID,
+      });
+    }
+
     if (consent === ACCEPTED) {
       sendPageView();
 
@@ -242,6 +329,8 @@ export function AnalyticsConsent() {
         window.removeEventListener("popstate", queuePageView);
       };
     }
+
+    resetPageViewState();
 
     if (consent === REJECTED) {
       denyAnalyticsConsent();
