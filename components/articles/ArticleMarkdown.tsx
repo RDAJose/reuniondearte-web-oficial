@@ -11,6 +11,11 @@ import {
 } from "@/components/articles/ArticleEmbed";
 import { ArticleImage } from "@/components/articles/ArticleImage";
 import { ArticleLinkCard } from "@/components/articles/ArticleLinkCard";
+import {
+  ArticleVisualBlock,
+  getSafeArticleUrl,
+  parseArticleMarkdownParts,
+} from "@/components/articles/ArticleVisualBlocks";
 
 type ArticleMarkdownProps = {
   children: string;
@@ -93,16 +98,20 @@ function stringAttribute(value: unknown) {
 }
 
 const markdownComponents: Components = {
-  a: ({ children, href = "", ...props }) => (
-    <a
-      {...props}
-      href={href}
-      rel={isExternalHref(href) ? "noopener noreferrer" : undefined}
-      target={isExternalHref(href) ? "_blank" : undefined}
-    >
-      {children}
-    </a>
-  ),
+  a: ({ children, href = "", ...props }) => {
+    const safeHref = getSafeArticleUrl(href) ?? "#";
+
+    return (
+      <a
+        {...props}
+        href={safeHref}
+        rel={isExternalHref(safeHref) ? "noopener noreferrer" : undefined}
+        target={isExternalHref(safeHref) ? "_blank" : undefined}
+      >
+        {children}
+      </a>
+    );
+  },
   img: ({ alt, src, title }) => (
     <ArticleImage
       alt={stringAttribute(alt)}
@@ -138,15 +147,30 @@ const markdownComponents: Components = {
 };
 
 export function ArticleMarkdown({ children }: ArticleMarkdownProps) {
+  const parts = parseArticleMarkdownParts(children);
+
   return (
     <div className="article-content">
-      <ReactMarkdown
-        components={markdownComponents}
-        remarkPlugins={[remarkGfm]}
-        skipHtml
-      >
-        {children}
-      </ReactMarkdown>
+      {parts.map((part, index) =>
+        part.type === "markdown" ? (
+          <ReactMarkdown
+            key={`markdown-${index}`}
+            components={markdownComponents}
+            remarkPlugins={[remarkGfm]}
+            skipHtml
+          >
+            {part.content}
+          </ReactMarkdown>
+        ) : (
+          <ArticleVisualBlock
+            key={`${part.kind}-${index}`}
+            attrs={part.attrs}
+            items={part.items}
+            kind={part.kind}
+            type={part.type}
+          />
+        ),
+      )}
     </div>
   );
 }

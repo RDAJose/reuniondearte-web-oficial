@@ -904,6 +904,227 @@ a {
   line-height: 1.5;
 }
 
+.rda-visual-block {
+  position: relative;
+  left: 50%;
+  width: min(100%, 58rem);
+  margin: 3.2rem 0 0;
+  transform: translateX(-50%);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.rda-visual-block h2 {
+  margin: 0 0 0.85rem;
+  border-top: 2px solid #181713;
+  padding-top: 0.58rem;
+  color: #181713;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.rda-grid-block__items,
+.rda-gallery-block__items {
+  --rda-grid-columns: 4;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.65rem, 1.8vw, 1rem);
+  min-width: 0;
+}
+
+.rda-grid-card__link,
+.rda-gallery-card__link {
+  display: block;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.article-content .rda-grid-card__link,
+.article-content .rda-gallery-card__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rda-grid-card,
+.rda-gallery-card {
+  display: grid;
+  min-width: 0;
+  gap: 0.48rem;
+  margin: 0;
+}
+
+.rda-grid-card__media,
+.rda-gallery-card__media,
+.rda-ranking-item__media {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(24, 23, 19, 0.14);
+  background:
+    linear-gradient(135deg, rgba(255, 253, 248, 0.95), rgba(236, 230, 218, 0.86)),
+    #ece6da;
+}
+
+.rda-grid-card[data-aspect="poster"] .rda-grid-card__media,
+.rda-gallery-card[data-aspect="poster"] .rda-gallery-card__media {
+  aspect-ratio: 2 / 3;
+}
+
+.rda-grid-card[data-aspect="square"] .rda-grid-card__media,
+.rda-gallery-card[data-aspect="square"] .rda-gallery-card__media {
+  aspect-ratio: 1 / 1;
+}
+
+.rda-grid-card[data-aspect="landscape"] .rda-grid-card__media,
+.rda-gallery-card[data-aspect="landscape"] .rda-gallery-card__media {
+  aspect-ratio: 16 / 9;
+}
+
+.rda-grid-card__media img,
+.rda-gallery-card__media img,
+.rda-ranking-item__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rda-grid-card__media span,
+.rda-gallery-card__media span,
+.rda-ranking-item__media span {
+  padding: 0.7rem;
+  color: #736c60;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.rda-grid-card figcaption,
+.rda-gallery-card figcaption {
+  display: grid;
+  gap: 0.12rem;
+  color: #625c51;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.rda-grid-card figcaption strong,
+.rda-gallery-card figcaption strong {
+  color: #181713;
+  font-size: 0.86rem;
+  line-height: 1.28;
+}
+
+.rda-grid-card figcaption cite,
+.rda-gallery-card figcaption cite,
+.rda-ranking-item cite {
+  color: #736c60;
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.rda-gallery-block {
+  width: min(100%, 64rem);
+}
+
+.rda-gallery-block__items {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.rda-gallery-card__media {
+  border-bottom: 3px solid #181713;
+}
+
+.rda-ranking-block {
+  width: min(100%, 54rem);
+}
+
+.rda-ranking-block__items {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0;
+  color: #38342d;
+  list-style: none;
+}
+
+.rda-ranking-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+  border-top: 1px solid rgba(24, 23, 19, 0.16);
+  padding-top: 0.85rem;
+}
+
+.rda-ranking-item__rank {
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  place-items: center;
+  border: 1px solid #181713;
+  background: #181713;
+  color: #fffdf8;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rda-ranking-item__media {
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 10;
+}
+
+.rda-ranking-item__body {
+  display: grid;
+  min-width: 0;
+  gap: 0.35rem;
+}
+
+.rda-ranking-item__body h3 {
+  margin: 0;
+  color: #181713;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.18rem, 4vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.18;
+}
+
+.rda-ranking-item__body h3 a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.rda-ranking-item__body p {
+  margin: 0;
+  color: #38342d;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.58;
+}
+
+.rda-ranking-item__body .rda-ranking-item__meta {
+  color: #625c51;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
 .article-share {
   display: grid;
   gap: 1rem;
@@ -1232,11 +1453,30 @@ a {
   .article-related__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .rda-grid-block__items,
+  .rda-gallery-block__items {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .rda-ranking-item {
+    grid-template-columns: auto 11rem minmax(0, 1fr);
+  }
+
+  .rda-ranking-item__media {
+    grid-column: auto;
+    aspect-ratio: 2 / 3;
+  }
 }
 
 @media (min-width: 1024px) {
   .home-article-flow {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .rda-grid-block__items,
+  .rda-gallery-block__items {
+    grid-template-columns: repeat(var(--rda-grid-columns), minmax(0, 1fr));
   }
 }
 
@@ -1347,7 +1587,8 @@ a {
   .article-inline-image,
   .article-embed,
   .article-media,
-  .article-link-card {
+  .article-link-card,
+  .rda-visual-block {
     width: 100%;
     max-width: 100%;
   }
@@ -1365,5 +1606,37 @@ a {
 
   .article-embed[data-aspect="normal"]::before {
     padding-top: 120%;
+  }
+
+  .rda-visual-block {
+    margin-top: 2.55rem;
+  }
+
+  .rda-visual-block h2 {
+    font-size: 0.76rem;
+  }
+
+  .rda-grid-block__items {
+    gap: 0.6rem;
+  }
+
+  .rda-grid-card figcaption,
+  .rda-gallery-card figcaption {
+    font-size: 0.72rem;
+  }
+
+  .rda-grid-card figcaption strong,
+  .rda-gallery-card figcaption strong {
+    font-size: 0.8rem;
+  }
+
+  .rda-ranking-item {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .rda-ranking-item__rank {
+    width: 2.1rem;
+    height: 2.1rem;
+    font-size: 0.98rem;
   }
 }

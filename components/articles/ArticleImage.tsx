@@ -5,7 +5,12 @@ type ArticleImageProps = {
 };
 
 function isSafeImageUrl(src: string) {
-  if (src.startsWith("/")) {
+  if (
+    src.startsWith("/") &&
+    !src.startsWith("//") &&
+    !src.includes("\\") &&
+    !/[\u0000-\u001f\u007f]/.test(src)
+  ) {
     return true;
   }
 
