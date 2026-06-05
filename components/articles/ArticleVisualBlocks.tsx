@@ -1,4 +1,8 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import {
+  ArticleImageLightbox,
+  type ArticleLightboxImage,
+} from "@/components/articles/ArticleImageLightbox";
 
 type VisualBlockKind = "rda-gallery" | "rda-grid" | "rda-ranking";
 type GridVariant = "landscape" | "poster" | "square";
@@ -25,6 +29,7 @@ type VisualImageProps = {
   credit?: string;
   href?: string;
   image?: string;
+  lightboxIndex?: number;
   sizes: string;
   title?: string;
 };
@@ -230,6 +235,33 @@ function fallbackAlt(item: VisualBlockItem) {
   return item.alt?.trim() || item.title?.trim() || "Imagen editorial";
 }
 
+function getLightboxCaption(item: VisualBlockItem) {
+  return item.title || item.caption || undefined;
+}
+
+function getLightboxImages(items: VisualBlockItem[]) {
+  const images: ArticleLightboxImage[] = [];
+  const itemIndexes = new Map<VisualBlockItem, number>();
+
+  for (const item of items) {
+    const safeImage = getSafeArticleUrl(item.image);
+
+    if (!safeImage) {
+      continue;
+    }
+
+    itemIndexes.set(item, images.length);
+    images.push({
+      alt: fallbackAlt(item),
+      credit: item.credit || undefined,
+      src: safeImage,
+      title: getLightboxCaption(item),
+    });
+  }
+
+  return { images, itemIndexes };
+}
+
 function VisualImage({
   alt,
   aspect,
@@ -237,16 +269,22 @@ function VisualImage({
   credit,
   href,
   image,
+  lightboxIndex,
   sizes,
   title,
 }: VisualImageProps) {
   const safeImage = getSafeArticleUrl(image);
   const safeHref = getSafeArticleUrl(href);
-  const imageNode = (
+  return (
     <figure className={className} data-aspect={aspect}>
-      <div className={`${className}__media`}>
-        {safeImage ? (
-          // eslint-disable-next-line @next/next/no-img-element -- Article body images can use editor-provided remote URLs and must keep static export compatibility.
+      {safeImage ? (
+        <button
+          aria-label={`Ampliar ${alt ?? title ?? "imagen editorial"}`}
+          className={`${className}__media`}
+          data-lightbox-index={lightboxIndex}
+          type="button"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- Article body images can use editor-provided remote URLs and must keep static export compatibility. */}
           <img
             alt={alt ?? "Imagen editorial"}
             decoding="async"
@@ -254,28 +292,83 @@ function VisualImage({
             sizes={sizes}
             src={safeImage}
           />
-        ) : (
+        </button>
+      ) : (
+        <div className={`${className}__media`}>
           <span>Sin imagen</span>
-        )}
-      </div>
+        </div>
+      )}
 
-      {(title || credit) && (
+      {(title || credit || safeHref) && (
         <figcaption>
-          {title && <strong>{title}</strong>}
+          {title && (
+            <strong>
+              {safeHref ? (
+                <a href={safeHref} {...getExternalLinkProps(safeHref)}>
+                  {title}
+                </a>
+              ) : (
+                title
+              )}
+            </strong>
+          )}
+          {!title && safeHref && (
+            <a
+              className={`${className}__caption-link`}
+              href={safeHref}
+              {...getExternalLinkProps(safeHref)}
+            >
+              Abrir enlace
+            </a>
+          )}
           {credit && <cite>{credit}</cite>}
         </figcaption>
       )}
     </figure>
   );
+}
 
-  if (!safeHref) {
-    return imageNode;
+function withLightbox(children: ReactNode, images: ArticleLightboxImage[]) {
+  if (images.length === 0) {
+    return children;
   }
 
+  return <ArticleImageLightbox images={images}>{children}</ArticleImageLightbox>;
+}
+
+function VisualRankingImage({
+  alt,
+  image,
+  lightboxIndex,
+}: {
+  alt: string;
+  image?: string;
+  lightboxIndex?: number;
+}) {
+  const safeImage = getSafeArticleUrl(image);
+
   return (
-    <a className={`${className}__link`} href={safeHref} {...getExternalLinkProps(safeHref)}>
-      {imageNode}
-    </a>
+    <div className="rda-ranking-item__media">
+      {safeImage ? (
+        <button
+          aria-label={`Ampliar ${alt}`}
+          className="rda-ranking-item__media-button"
+          data-lightbox-index={lightboxIndex}
+          type="button"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- Article ranking images can use editor-provided remote URLs and must keep static export compatibility. */}
+          <img
+            alt={alt}
+            decoding="async"
+            loading="lazy"
+            sizes="(max-width: 640px) 100vw, 11rem"
+            src={safeImage}
+          />
+        </button>
+      ) : (
+        <span>Sin imagen</span>
+      )}
+    </div>
   );
 }
 
@@ -303,12 +396,13 @@ function ArticleGridBlock({
   const variant = getGridVariant(attrs.variant);
   const columns = clampColumns(attrs.columns);
   const style = columns ? ({ "--rda-grid-columns": columns } as CSSProperties) : undefined;
+  const { images, itemIndexes } = getLightboxImages(items);
 
   if (items.length === 0) {
     return null;
   }
 
-  return (
+  return withLightbox(
     <section className="rda-visual-block rda-grid-block" data-variant={variant}>
       {title && <h2>{title}</h2>}
       <div className="rda-grid-block__items" style={style}>
@@ -321,12 +415,14 @@ function ArticleGridBlock({
             credit={item.credit}
             href={item.href}
             image={item.image}
+            lightboxIndex={itemIndexes.get(item)}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
             title={item.title || item.caption}
           />
         ))}
       </div>
-    </section>
+    </section>,
+    images,
   );
 }
 
@@ -338,12 +434,13 @@ function ArticleGalleryBlock({
   const variant = getGridVariant(attrs.variant ?? "landscape");
   const columns = clampColumns(attrs.columns);
   const style = columns ? ({ "--rda-grid-columns": columns } as CSSProperties) : undefined;
+  const { images, itemIndexes } = getLightboxImages(items);
 
   if (items.length === 0) {
     return null;
   }
 
-  return (
+  return withLightbox(
     <section className="rda-visual-block rda-gallery-block" data-variant={variant}>
       {title && <h2>{title}</h2>}
       <div className="rda-gallery-block__items" style={style}>
@@ -356,12 +453,14 @@ function ArticleGalleryBlock({
             credit={item.credit}
             href={item.href}
             image={item.image}
+            lightboxIndex={itemIndexes.get(item)}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 22vw"
             title={item.title || item.caption}
           />
         ))}
       </div>
-    </section>
+    </section>,
+    images,
   );
 }
 
@@ -370,18 +469,18 @@ function ArticleRankingBlock({
   items,
 }: Pick<Extract<ParsedArticleMarkdownPart, { type: "visual" }>, "attrs" | "items">) {
   const title = getVisualBlockTitle(attrs);
+  const { images, itemIndexes } = getLightboxImages(items);
 
   if (items.length === 0) {
     return null;
   }
 
-  return (
+  return withLightbox(
     <section className="rda-visual-block rda-ranking-block">
       {title && <h2>{title}</h2>}
       <ol className="rda-ranking-block__items">
         {items.map((item, index) => {
           const safeHref = getSafeArticleUrl(item.href);
-          const safeImage = getSafeArticleUrl(item.image);
           const rank = item.rank?.trim() || String(index + 1);
 
           return (
@@ -392,20 +491,11 @@ function ArticleRankingBlock({
               <span className="rda-ranking-item__rank">{rank}</span>
 
               {item.image && (
-                <div className="rda-ranking-item__media">
-                  {safeImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- Article ranking images can use editor-provided remote URLs and must keep static export compatibility.
-                    <img
-                      alt={fallbackAlt(item)}
-                      decoding="async"
-                      loading="lazy"
-                      sizes="(max-width: 640px) 100vw, 11rem"
-                      src={safeImage}
-                    />
-                  ) : (
-                    <span>Sin imagen</span>
-                  )}
-                </div>
+                <VisualRankingImage
+                  alt={fallbackAlt(item)}
+                  image={item.image}
+                  lightboxIndex={itemIndexes.get(item)}
+                />
               )}
 
               <div className="rda-ranking-item__body">
@@ -433,6 +523,7 @@ function ArticleRankingBlock({
           );
         })}
       </ol>
-    </section>
+    </section>,
+    images,
   );
 }
