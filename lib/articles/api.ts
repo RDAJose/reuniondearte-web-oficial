@@ -1,10 +1,13 @@
-import type { Article, ArticleCategory } from "./types";
+import type { Article, ArticleAuthorDetails, ArticleCategory } from "./types";
 
 type ApiArticleSummary = {
   title?: string;
   slug?: string;
   excerpt?: string | null;
   category?: string | null;
+  author?: string | RawApiAuthor | null;
+  authorDetails?: RawApiAuthor | null;
+  authors?: Array<string | RawApiAuthor> | null;
   featuredMedia?: {
     publicUrl?: string | null;
     altText?: string | null;
@@ -26,6 +29,15 @@ type ApiArticleDetail = ApiArticleSummary & {
   contentHtml?: string | null;
   contentMarkdown?: string | null;
   content?: string | null;
+};
+
+type RawApiAuthor = {
+  id?: number | null;
+  name?: string | null;
+  slug?: string | null;
+  role?: string | null;
+  bio?: string | null;
+  avatarUrl?: string | null;
 };
 
 export type ApiCategory = {
@@ -120,6 +132,11 @@ function mapApiArticleSummary(item: ApiArticleSummary): Article | null {
     title: item.title,
     excerpt: item.excerpt ?? "",
     category: mapCategorySlug(item.category),
+    author: mapApiAuthorValue(item.author) ?? undefined,
+    authorDetails: mapApiAuthorObject(item.authorDetails) ?? undefined,
+    authors: item.authors
+      ?.map(mapApiAuthorValue)
+      .filter((author): author is string | ArticleAuthorDetails => Boolean(author)),
     publishedAt: item.publishedAt ?? "",
     featuredMedia: item.featuredMedia
       ? {
@@ -151,6 +168,35 @@ async function mapApiArticleDetail(item: ApiArticleDetail): Promise<Article | nu
   return {
     ...summary,
     contentMarkdown: item.contentMarkdown ?? item.content ?? "",
+  };
+}
+
+function mapApiAuthorValue(
+  value: string | RawApiAuthor | null | undefined,
+): string | ArticleAuthorDetails | null {
+  if (!value) {
+    return null;
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  return mapApiAuthorObject(value);
+}
+
+function mapApiAuthorObject(value: RawApiAuthor | null | undefined): ArticleAuthorDetails | null {
+  if (!value?.name) {
+    return null;
+  }
+
+  return {
+    id: value.id ?? undefined,
+    name: value.name,
+    slug: value.slug ?? undefined,
+    role: value.role ?? undefined,
+    bio: value.bio ?? undefined,
+    avatarUrl: value.avatarUrl ?? undefined,
   };
 }
 

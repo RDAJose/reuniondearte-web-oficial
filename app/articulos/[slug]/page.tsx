@@ -10,7 +10,7 @@ import {
   getArticleBySlug,
   getPublishedArticles,
 } from "@/lib/articles/articles";
-import { articleAuthor } from "@/lib/articles/author";
+import { formatAuthorNames, getArticleAuthors } from "@/lib/articles/author";
 import { formatArticleDate } from "@/lib/articles/dates";
 import {
   getArticleImage,
@@ -23,6 +23,7 @@ import { siteConfig } from "@/lib/config/site";
 const EMPTY_ARTICLES_PLACEHOLDER = "__sin-articulos-publicados__";
 const PUBLIC_API_BASE_URL = "https://reuniondearte-api.onrender.com";
 const OFFICIAL_ARTICLE_SLUG_FALLBACKS = [
+  "peliculas-ambientadas-en-hoteles",
   "vivienda-minimalista-diseno-funcional-y-asequible",
 ];
 
@@ -61,17 +62,19 @@ export async function generateMetadata({
 
   const coverImage = getArticleImage(article);
   const coverAlt = getArticleImageAlt(article);
+  const articleAuthors = getArticleAuthors(article);
+  const authorNames = articleAuthors.map((author) => author.name);
 
   return {
     title: article.title,
     description: article.excerpt,
-    authors: [{ name: articleAuthor.name }],
+    authors: articleAuthors.map((author) => ({ name: author.name })),
     openGraph: {
       title: article.title,
       description: article.excerpt,
       type: "article",
       publishedTime: article.publishedAt,
-      authors: [articleAuthor.name],
+      authors: authorNames,
       images: coverImage
         ? [
             {
@@ -112,6 +115,7 @@ export default async function ArticleDetailPage({
   const articleUrl = new URL(`/articulos/${articleSlug}/`, siteConfig.url).toString();
   const apiBaseUrl = process.env.RDA_API_BASE_URL ?? PUBLIC_API_BASE_URL;
   const readableDate = formatArticleDate(article.publishedAt);
+  const articleAuthors = getArticleAuthors(article);
 
   return (
     <main className="article-detail">
@@ -135,7 +139,7 @@ export default async function ArticleDetailPage({
             <p className="article-hero__excerpt">{article.excerpt}</p>
           ) : null}
 
-          <p className="article-hero__byline">Por {articleAuthor.name}</p>
+          <p className="article-hero__byline">Por {formatAuthorNames(articleAuthors)}</p>
         </header>
 
         {coverImage ? (
@@ -161,7 +165,7 @@ export default async function ArticleDetailPage({
         ) : null}
 
         <div className="article-shell">
-          <ArticleAuthorBox publishedAt={article.publishedAt} />
+          <ArticleAuthorBox authors={articleAuthors} publishedAt={article.publishedAt} />
 
           <ArticleMarkdown>{article.contentMarkdown}</ArticleMarkdown>
 

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getArticleCategories } from "@/lib/articles/categories";
 import { getPublishedArticles } from "@/lib/articles/articles";
+import { publicAuthors } from "@/lib/articles/author";
 import { siteConfig } from "@/lib/config/site";
 
 function url(path: string) {
@@ -35,7 +36,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(article.publishedAt),
   }));
 
-  return [...staticRoutes, ...categoryRoutes, ...articleRoutes];
+  const authorRoutes: MetadataRoute.Sitemap = publicAuthors.map((author) => ({
+    url: url(`${author.href}/`),
+    lastModified: new Date(),
+  }));
+
+  return [...staticRoutes, ...categoryRoutes, ...articleRoutes, ...authorRoutes];
 }
 
 export const dynamic = "force-static";

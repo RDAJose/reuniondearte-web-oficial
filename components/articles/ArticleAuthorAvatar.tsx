@@ -1,39 +1,49 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import Image from "next/image";
-import { articleAuthor } from "@/lib/articles/author";
+import { articleAuthor, type ArticleAuthor } from "@/lib/articles/author";
 
 type ArticleAuthorAvatarProps = {
+  author?: ArticleAuthor;
   className?: string;
   imageSizes?: string;
 };
 
-function hasLocalAuthorImage() {
-  const imagePath = join(process.cwd(), "public", "authors", "jose-luis-olmedo.jpg");
+function hasLocalAuthorImage(src: string | undefined) {
+  if (!src?.startsWith("/")) {
+    return false;
+  }
+
+  const imagePath = join(process.cwd(), "public", src);
   return existsSync(imagePath);
 }
 
 export function ArticleAuthorAvatar({
+  author = articleAuthor,
   className = "",
   imageSizes = "64px",
 }: ArticleAuthorAvatarProps) {
-  const showImage = hasLocalAuthorImage();
+  const localImage = hasLocalAuthorImage(author.avatarPath) ? author.avatarPath : undefined;
+  const remoteImage = author.avatarUrl?.startsWith("http") ? author.avatarUrl : undefined;
 
   return (
     <div
       className={`article-author-avatar ${className}`.trim()}
-      aria-hidden={!showImage}
+      aria-hidden={!localImage && !remoteImage}
     >
-      {showImage ? (
+      {localImage ? (
         <Image
-          alt={articleAuthor.name}
+          alt={author.name}
           className="article-author-avatar__image"
           fill
           sizes={imageSizes}
-          src={articleAuthor.avatarPath}
+          src={localImage}
         />
+      ) : remoteImage ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img alt={author.name} className="article-author-avatar__image" src={remoteImage} />
       ) : (
-        <span>{articleAuthor.initials}</span>
+        <span>{author.initials}</span>
       )}
     </div>
   );

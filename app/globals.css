@@ -636,6 +636,31 @@ a {
   background: rgba(255, 250, 240, 0.36);
 }
 
+.article-author-boxes {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1.35rem;
+  border-top: 1px solid rgba(24, 23, 19, 0.14);
+  border-bottom: 1px solid rgba(24, 23, 19, 0.14);
+  padding: 0.75rem 0;
+}
+
+.article-author-boxes .article-author-box {
+  margin-top: 0;
+  border: 0;
+  padding: 0.35rem 0;
+}
+
+.article-author-boxes .article-author-box + .article-author-box {
+  border-top: 1px solid rgba(24, 23, 19, 0.1);
+  padding-top: 0.75rem;
+}
+
+.article-author-boxes__list {
+  display: grid;
+  gap: 0.2rem;
+}
+
 .article-author-avatar {
   position: relative;
   display: grid;
@@ -655,6 +680,8 @@ a {
 }
 
 .article-author-avatar__image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center top;
 }
