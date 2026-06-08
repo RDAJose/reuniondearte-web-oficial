@@ -31,7 +31,10 @@ export function ArticleAuthorAvatar({
       className={`article-author-avatar ${className}`.trim()}
       aria-hidden={!localImage && !remoteImage}
     >
-      {localImage ? (
+      {remoteImage ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img alt={author.name} className="article-author-avatar__image" src={remoteImage} />
+      ) : localImage ? (
         <Image
           alt={author.name}
           className="article-author-avatar__image"
@@ -39,9 +42,6 @@ export function ArticleAuthorAvatar({
           sizes={imageSizes}
           src={localImage}
         />
-      ) : remoteImage ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img alt={author.name} className="article-author-avatar__image" src={remoteImage} />
       ) : (
         <span>{author.initials}</span>
       )}

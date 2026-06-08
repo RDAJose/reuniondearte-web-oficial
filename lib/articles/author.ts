@@ -17,9 +17,14 @@ type ArticleAuthorValue =
   | null
   | undefined;
 
+const localAvatarPathsBySlug: Record<string, string> = {
+  "jose-luis-olmedo": "/authors/jose-luis-olmedo.jpg",
+  "maria-garcia-santiago": "/authors/maria-garcia-santiago.jpg",
+};
+
 const knownAuthors: ArticleAuthor[] = [
   {
-    avatarPath: "/authors/jose-luis-olmedo.jpg",
+    avatarPath: localAvatarPathsBySlug["jose-luis-olmedo"],
     bio: "Creador, desarrollador y editor de Reunión de Arte. Crítica cultural, cine, música y arte.",
     href: "/autores/jose-luis-olmedo",
     initials: "JO",
@@ -29,6 +34,7 @@ const knownAuthors: ArticleAuthor[] = [
   },
   {
     bio: "Pintora, amante del arte y el cine, y editora en Reunión de Arte.",
+    avatarPath: localAvatarPathsBySlug["maria-garcia-santiago"],
     href: "/autores/maria-garcia-santiago",
     initials: "MG",
     name: "María García Santiago",
@@ -129,15 +135,19 @@ function normalizeAuthorValue(value: ArticleAuthorValue): ArticleAuthor | null {
 
 function withKnownAuthorDefaults(author: ArticleAuthor): ArticleAuthor {
   const knownAuthor = knownAuthors.find((known) => sameAuthor(known, author));
+  const localAvatarPath = localAvatarPathsBySlug[author.slug];
 
   if (!knownAuthor) {
-    return author;
+    return {
+      ...author,
+      avatarPath: author.avatarPath ?? localAvatarPath,
+    };
   }
 
   return {
     ...author,
     ...knownAuthor,
-    avatarPath: author.avatarPath ?? knownAuthor.avatarPath,
+    avatarPath: author.avatarPath ?? knownAuthor.avatarPath ?? localAvatarPath,
     avatarUrl: author.avatarUrl ?? knownAuthor.avatarUrl,
     id: author.id ?? knownAuthor.id,
   };
