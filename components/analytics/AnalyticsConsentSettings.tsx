@@ -102,7 +102,7 @@ export function AnalyticsConsentSettings() {
         <p>Comprobaciones rápidas:</p>
         <ul>
           <li>Network: gtag/js?id={GA_MEASUREMENT_ID}</li>
-          <li>Network: collect</li>
+          <li>Network: google-analytics.com/g/collect</li>
           <li>Console: window.rdaAnalyticsStatus()</li>
           <li>Console: window.rdaAnalyticsTestEvent()</li>
         </ul>

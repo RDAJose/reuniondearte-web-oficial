@@ -13,7 +13,7 @@ ID de medición: `G-021Z217Z8C`.
 5. Pulsar `Aceptar analítica`.
 6. Abrir `https://reuniondearte.com/articulos/peliculas-ambientadas-en-hoteles/?test=analytics`.
 7. En Network comprobar que aparece `gtag/js?id=G-021Z217Z8C`.
-8. En Network comprobar peticiones `collect`.
+8. En Network comprobar peticiones `https://www.google-analytics.com/g/collect`.
 9. En Console ejecutar:
 
 ```js
@@ -33,16 +33,27 @@ window.rdaAnalyticsTestEvent()
 
 - `localStorage.getItem("rda:analytics-consent")` debe ser `null` o `"rejected"`.
 - No debe descargarse `gtag/js?id=G-021Z217Z8C`.
-- No deben enviarse peticiones `collect`.
+- No deben enviarse peticiones `https://www.google-analytics.com/g/collect`.
 - El HTML exportado no debe contener `gtag/js`, `googletagmanager` ni `GTM-`.
 
 ## Después de aceptar analítica
 
 - `localStorage.getItem("rda:analytics-consent")` debe ser `"accepted"`.
-- `window.rdaAnalyticsStatus()` debe indicar `consent: "accepted"`.
+- `window.rdaAnalyticsStatus()` debe indicar `consent: "accepted"` e `initialized: true`.
 - `typeof window.gtag` debe ser `"function"`.
-- Debe enviarse un `page_view` con `page_title`, `page_location` y `page_path`.
+- Debe enviarse un `page_view` con `send_to`, `page_title`, `page_location` y `page_path`.
+- En Network debe aparecer `https://www.google-analytics.com/g/collect`.
 - Cada navegación SPA debe enviar un nuevo `page_view`.
+
+## Evento de prueba
+
+Con consentimiento aceptado, ejecutar:
+
+```js
+window.rdaAnalyticsTestEvent()
+```
+
+Debe enviar `rda_analytics_test` con `send_to`, `event_category`, `event_label`, `debug_mode`, `page_title`, `page_location` y `page_path`.
 
 ## Depuración opcional en build
 
