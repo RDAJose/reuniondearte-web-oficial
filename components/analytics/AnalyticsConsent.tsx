@@ -1,359 +1,96 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
-import { analyticsConfig } from "@/lib/config/analytics";
+import { usePathname } from "next/navigation";
+import {
+  exposeAnalyticsDebugHelpers,
+  getAnalyticsConsent,
+  loadGoogleAnalytics,
+  pageView,
+  setAnalyticsConsent,
+  subscribeToAnalyticsConsent,
+} from "@/lib/analytics/ga4";
 
-const CONSENT_STORAGE_KEY = "rda:analytics-consent";
-const CONSENT_CHANGE_EVENT = "rda:analytics-consent-change";
-const GA_MEASUREMENT_ID = analyticsConfig.measurementId;
-const GA_SCRIPT_ID = "google-analytics-gtag";
-const ACCEPTED = "accepted";
-const REJECTED = "rejected";
-const LOADING = "loading";
-
-type ConsentValue = typeof ACCEPTED | typeof REJECTED;
-type ConsentSnapshot = ConsentValue | null | typeof LOADING;
-
-let lastTrackedPage: string | null = null;
-let pendingTrackedPage: string | null = null;
-let googleAnalyticsLoadPromise: Promise<void> | null = null;
-let googleAnalyticsConfigured = false;
-let defaultConsentConfigured = false;
-
-declare global {
-  interface Window {
-    dataLayer?: unknown[];
-    gtag?: (...args: unknown[]) => void;
-    rdaAnalyticsStatus?: () => {
-      consent: ConsentValue | null;
-      gtagReady: boolean;
-      measurementId: string;
-      scriptLoaded: boolean;
-    };
-  }
+function getConsentSnapshot() {
+  return getAnalyticsConsent();
 }
 
-function isDevelopment() {
-  return process.env.NODE_ENV !== "production";
-}
-
-function isDebugEnabled() {
-  return isDevelopment() || analyticsConfig.debug;
-}
-
-function logAnalytics(message: string, details?: Record<string, unknown>) {
-  if (!isDebugEnabled()) {
-    return;
-  }
-
-  if (details) {
-    console.info(`[RDA Analytics] ${message}`, details);
-    return;
-  }
-
-  console.info(`[RDA Analytics] ${message}`);
-}
-
-function getStoredConsent(): ConsentValue | null {
-  try {
-    const value = window.localStorage.getItem(CONSENT_STORAGE_KEY);
-    return value === ACCEPTED || value === REJECTED ? value : null;
-  } catch {
-    return null;
-  }
-}
-
-function storeConsent(value: ConsentValue) {
-  try {
-    window.localStorage.setItem(CONSENT_STORAGE_KEY, value);
-  } catch {
-    // If localStorage is unavailable, keep the in-memory decision for this visit.
-  }
-
-  window.dispatchEvent(new Event(CONSENT_CHANGE_EVENT));
-}
-
-function getGoogleAnalyticsScript() {
-  return document.getElementById(GA_SCRIPT_ID) as HTMLScriptElement | null;
-}
-
-function registerAnalyticsStatus() {
-  if (!isDebugEnabled()) {
-    return;
-  }
-
-  window.rdaAnalyticsStatus = () => {
-    const script = getGoogleAnalyticsScript();
-
-    return {
-      consent: getStoredConsent(),
-      gtagReady: typeof window.gtag === "function",
-      measurementId: GA_MEASUREMENT_ID,
-      scriptLoaded: script?.dataset.loaded === "true",
-    };
-  };
-}
-
-function subscribeToConsent(callback: () => void) {
-  window.addEventListener("storage", callback);
-  window.addEventListener(CONSENT_CHANGE_EVENT, callback);
-
-  return () => {
-    window.removeEventListener("storage", callback);
-    window.removeEventListener(CONSENT_CHANGE_EVENT, callback);
-  };
-}
-
-function getConsentSnapshot(): ConsentSnapshot {
-  return getStoredConsent();
-}
-
-function getServerConsentSnapshot(): ConsentSnapshot {
+function getServerConsentSnapshot() {
   return null;
 }
 
-function ensureGoogleTag() {
-  window.dataLayer = window.dataLayer ?? [];
-  window.gtag =
-    window.gtag ??
-    function gtag(...args: unknown[]) {
-      window.dataLayer?.push(args);
-    };
-}
-
-function configureDefaultConsent() {
-  ensureGoogleTag();
-
-  if (defaultConsentConfigured) {
-    return;
-  }
-
-  window.gtag?.("consent", "default", {
-    analytics_storage: "denied",
-    ad_personalization: "denied",
-    ad_storage: "denied",
-    ad_user_data: "denied",
-    personalization_storage: "denied",
-  });
-
-  defaultConsentConfigured = true;
-  logAnalytics("default consent configured", {
-    analytics_storage: "denied",
-    measurementId: GA_MEASUREMENT_ID,
-  });
-}
-
-function configureGoogleAnalytics() {
-  if (googleAnalyticsConfigured) {
-    return;
-  }
-
-  window.gtag?.("js", new Date());
-  window.gtag?.("config", GA_MEASUREMENT_ID, {
-    allow_ad_personalization_signals: false,
-    allow_google_signals: false,
-    send_page_view: false,
-  });
-
-  googleAnalyticsConfigured = true;
-  logAnalytics("GA configured", {
-    measurementId: GA_MEASUREMENT_ID,
-    send_page_view: false,
-  });
-}
-
-function ensureGoogleAnalyticsLoaded() {
-  if (googleAnalyticsLoadPromise) {
-    return googleAnalyticsLoadPromise;
-  }
-
-  configureDefaultConsent();
-
-  googleAnalyticsLoadPromise = new Promise((resolve, reject) => {
-    const existingScript = getGoogleAnalyticsScript();
-
-    if (existingScript?.dataset.loaded === "true") {
-      configureGoogleAnalytics();
-      resolve();
-      return;
-    }
-
-    const script = existingScript ?? document.createElement("script");
-
-    script.id = GA_SCRIPT_ID;
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-    logAnalytics(`loading GA4 ${GA_MEASUREMENT_ID}`, {
-      measurementId: GA_MEASUREMENT_ID,
-      src: script.src,
-    });
-
-    script.addEventListener(
-      "load",
-      () => {
-        script.dataset.loaded = "true";
-        logAnalytics("GA script loaded", {
-          measurementId: GA_MEASUREMENT_ID,
-        });
-        configureGoogleAnalytics();
-        resolve();
-      },
-      { once: true },
-    );
-
-    script.addEventListener(
-      "error",
-      () => {
-        googleAnalyticsLoadPromise = null;
-        reject(new Error("Google Analytics could not be loaded."));
-      },
-      { once: true },
-    );
-
-    if (!existingScript) {
-      document.head.appendChild(script);
-    }
-  });
-
-  return googleAnalyticsLoadPromise;
-}
-
-function grantAnalyticsConsent() {
-  configureDefaultConsent();
-  window.gtag?.("consent", "update", {
-    analytics_storage: "granted",
-  });
-  logAnalytics("consent updated", {
-    analytics_storage: "granted",
-    measurementId: GA_MEASUREMENT_ID,
-  });
-}
-
-function denyAnalyticsConsent() {
-  window.gtag?.("consent", "update", {
-    analytics_storage: "denied",
-  });
-  logAnalytics("consent updated", {
-    analytics_storage: "denied",
-    measurementId: GA_MEASUREMENT_ID,
-  });
-}
-
-function resetPageViewState() {
-  lastTrackedPage = null;
-  pendingTrackedPage = null;
-}
-
-async function sendPageView() {
-  const pagePath = `${window.location.pathname}${window.location.search}`;
-  const pageLocation = window.location.href;
-
-  if (lastTrackedPage === pageLocation || pendingTrackedPage === pageLocation) {
-    return;
-  }
-
-  pendingTrackedPage = pageLocation;
-
-  try {
-    await ensureGoogleAnalyticsLoaded();
-    grantAnalyticsConsent();
-
-    window.gtag?.("event", "page_view", {
-      page_location: pageLocation,
-      page_path: pagePath,
-      page_title: document.title,
-    });
-    logAnalytics("page_view sent", {
-      measurementId: GA_MEASUREMENT_ID,
-      page_location: pageLocation,
-      page_path: pagePath,
-      page_title: document.title,
-    });
-
-    lastTrackedPage = pageLocation;
-  } catch {
-    // Keep navigation unaffected if analytics is blocked or unavailable.
-  } finally {
-    if (pendingTrackedPage === pageLocation) {
-      pendingTrackedPage = null;
-    }
-  }
-}
-
 export function AnalyticsConsent() {
+  const pathname = usePathname();
   const consent = useSyncExternalStore(
-    subscribeToConsent,
+    subscribeToAnalyticsConsent,
     getConsentSnapshot,
     getServerConsentSnapshot,
   );
 
   useEffect(() => {
-    registerAnalyticsStatus();
-    logAnalytics("component mounted");
+    exposeAnalyticsDebugHelpers();
   }, []);
 
   useEffect(() => {
-    if (consent !== LOADING) {
-      logAnalytics("consent state:", {
-        consent,
-        measurementId: GA_MEASUREMENT_ID,
-      });
+    if (consent !== "accepted") {
+      return;
     }
 
-    if (consent === ACCEPTED) {
-      sendPageView();
+    void loadGoogleAnalytics().then(() => {
+      void pageView();
+    });
+  }, [consent, pathname]);
 
-      const queuePageView = () => {
-        window.setTimeout(() => {
-          sendPageView();
-        }, 0);
-      };
-      const originalPushState = window.history.pushState;
-      const originalReplaceState = window.history.replaceState;
-
-      window.history.pushState = function pushState(
-        ...args: Parameters<History["pushState"]>
-      ) {
-        const result = originalPushState.apply(this, args);
-        queuePageView();
-        return result;
-      };
-
-      window.history.replaceState = function replaceState(
-        ...args: Parameters<History["replaceState"]>
-      ) {
-        const result = originalReplaceState.apply(this, args);
-        queuePageView();
-        return result;
-      };
-
-      window.addEventListener("popstate", queuePageView);
-
-      return () => {
-        window.history.pushState = originalPushState;
-        window.history.replaceState = originalReplaceState;
-        window.removeEventListener("popstate", queuePageView);
-      };
+  useEffect(() => {
+    if (consent !== "accepted") {
+      return;
     }
 
-    resetPageViewState();
+    const queuePageView = () => {
+      window.setTimeout(() => {
+        void pageView();
+      }, 0);
+    };
+    const originalPushState = window.history.pushState;
+    const originalReplaceState = window.history.replaceState;
 
-    if (consent === REJECTED) {
-      denyAnalyticsConsent();
-    }
+    window.history.pushState = function pushState(
+      ...args: Parameters<History["pushState"]>
+    ) {
+      const result = originalPushState.apply(this, args);
+      queuePageView();
+      return result;
+    };
+
+    window.history.replaceState = function replaceState(
+      ...args: Parameters<History["replaceState"]>
+    ) {
+      const result = originalReplaceState.apply(this, args);
+      queuePageView();
+      return result;
+    };
+
+    window.addEventListener("popstate", queuePageView);
+
+    return () => {
+      window.history.pushState = originalPushState;
+      window.history.replaceState = originalReplaceState;
+      window.removeEventListener("popstate", queuePageView);
+    };
   }, [consent]);
 
   function acceptAnalytics() {
-    storeConsent(ACCEPTED);
-    sendPageView();
+    setAnalyticsConsent("accepted");
+    void loadGoogleAnalytics().then(() => {
+      void pageView();
+    });
   }
 
   function rejectAnalytics() {
-    storeConsent(REJECTED);
-    denyAnalyticsConsent();
+    setAnalyticsConsent("rejected");
   }
 
-  if (consent === LOADING || consent) {
+  if (consent) {
     return null;
   }
 
@@ -386,4 +123,3 @@ export function AnalyticsConsent() {
     </section>
   );
 }
-
