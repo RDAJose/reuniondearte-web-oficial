@@ -22,7 +22,9 @@ type ApiArticleSummary = {
   coverAltText?: string | null;
   featuredImageUrl?: string | null;
   thumbnailImageUrl?: string | null;
+  canonicalUrl?: string | null;
   publishedAt?: string | null;
+  updatedAt?: string | null;
 };
 
 type ApiArticleDetail = ApiArticleSummary & {
@@ -154,6 +156,8 @@ function mapApiArticleSummary(item: ApiArticleSummary): Article | null {
     coverCredit: item.coverCredit ?? undefined,
     featuredImageUrl: item.featuredImageUrl ?? undefined,
     thumbnailImageUrl: item.thumbnailImageUrl ?? undefined,
+    canonicalUrl: item.canonicalUrl ?? undefined,
+    updatedAt: item.updatedAt ?? undefined,
     status: "published",
     contentMarkdown: "",
   };

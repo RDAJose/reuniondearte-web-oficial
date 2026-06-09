@@ -32,6 +32,8 @@ export type Article = {
   coverCredit?: string;
   featuredImageUrl?: string;
   thumbnailImageUrl?: string;
+  canonicalUrl?: string;
+  updatedAt?: string;
   status: "published" | "draft";
   contentMarkdown: string;
 };

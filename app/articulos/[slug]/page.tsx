@@ -10,8 +10,10 @@ import {
   getArticleBySlug,
   getPublishedArticles,
 } from "@/lib/articles/articles";
+import { officialArticleSlugFallbacks } from "@/lib/articles/static-routes";
 import { formatAuthorNames, getArticleAuthors } from "@/lib/articles/author";
 import { formatArticleDate } from "@/lib/articles/dates";
+import type { Article } from "@/lib/articles/types";
 import {
   getArticleImage,
   getArticleImageAlt,
@@ -22,10 +24,6 @@ import { siteConfig } from "@/lib/config/site";
 
 const EMPTY_ARTICLES_PLACEHOLDER = "__sin-articulos-publicados__";
 const PUBLIC_API_BASE_URL = "https://reuniondearte-api.onrender.com";
-const OFFICIAL_ARTICLE_SLUG_FALLBACKS = [
-  "peliculas-ambientadas-en-hoteles",
-  "vivienda-minimalista-diseno-funcional-y-asequible",
-];
 
 export const dynamicParams = false;
 
@@ -33,7 +31,7 @@ export async function generateStaticParams() {
   const articles = await getPublishedArticles();
   const slugs = Array.from(
     new Set(
-      [...articles.map((article) => article.slug), ...OFFICIAL_ARTICLE_SLUG_FALLBACKS]
+      [...articles.map((article) => article.slug), ...officialArticleSlugFallbacks]
         .map((slug) => normalizeStaticSlug(slug))
         .filter((slug): slug is string => Boolean(slug)),
     ),
@@ -64,16 +62,26 @@ export async function generateMetadata({
   const coverAlt = getArticleImageAlt(article);
   const articleAuthors = getArticleAuthors(article);
   const authorNames = articleAuthors.map((author) => author.name);
+  const canonicalPath = `/articulos/${article.slug}/`;
 
   return {
     title: article.title,
     description: article.excerpt,
     authors: articleAuthors.map((author) => ({ name: author.name })),
+    alternates: {
+      canonical: canonicalPath,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
     openGraph: {
       title: article.title,
       description: article.excerpt,
+      url: canonicalPath,
       type: "article",
       publishedTime: article.publishedAt,
+      modifiedTime: article.updatedAt ?? article.publishedAt,
       authors: authorNames,
       images: coverImage
         ? [
@@ -83,6 +91,12 @@ export async function generateMetadata({
             },
           ]
         : undefined,
+    },
+    twitter: {
+      card: coverImage ? "summary_large_image" : "summary",
+      title: article.title,
+      description: article.excerpt,
+      images: coverImage ? [coverImage] : undefined,
     },
   };
 }
@@ -116,9 +130,23 @@ export default async function ArticleDetailPage({
   const apiBaseUrl = process.env.RDA_API_BASE_URL ?? PUBLIC_API_BASE_URL;
   const readableDate = formatArticleDate(article.publishedAt);
   const articleAuthors = getArticleAuthors(article);
+  const jsonLd = getArticleJsonLd({
+    article,
+    articleAuthors,
+    articleUrl,
+    coverImage,
+  });
 
   return (
     <main className="article-detail">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd.article) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd.breadcrumbs) }}
+      />
       <article className="article-detail__article">
         <header className="article-hero">
           <div className="article-hero__meta">
@@ -200,4 +228,73 @@ export default async function ArticleDetailPage({
 function normalizeStaticSlug(slug: string | null | undefined) {
   const cleanSlug = slug?.trim().replace(/^\/?articulos\//, "").replace(/^\/+|\/+$/g, "");
   return cleanSlug || null;
+}
+
+type ArticleJsonLdInput = {
+  article: Article;
+  articleAuthors: ReturnType<typeof getArticleAuthors>;
+  articleUrl: string;
+  coverImage?: string | null;
+};
+
+function getArticleJsonLd({
+  article,
+  articleAuthors,
+  articleUrl,
+  coverImage,
+}: ArticleJsonLdInput) {
+  const dateModified = article.updatedAt ?? article.publishedAt;
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.excerpt,
+    image: coverImage ? [coverImage] : undefined,
+    datePublished: article.publishedAt,
+    dateModified,
+    author: articleAuthors.map((author) => ({
+      "@type": "Person",
+      name: author.name,
+      url: new URL(`${author.href}/`, siteConfig.url).toString(),
+    })),
+    publisher: {
+      "@type": "Organization",
+      name: siteConfig.name,
+      url: siteConfig.url,
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": articleUrl,
+    },
+  };
+
+  const breadcrumbsJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Inicio",
+        item: siteConfig.url,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Artículos",
+        item: new URL("/articulos/", siteConfig.url).toString(),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: article.title,
+        item: articleUrl,
+      },
+    ],
+  };
+
+  return {
+    article: articleJsonLd,
+    breadcrumbs: breadcrumbsJsonLd,
+  };
 }

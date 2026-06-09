@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { analyticsConfig } from "@/lib/config/analytics";
 
 const CONSENT_STORAGE_KEY = "rda:analytics-consent";
 const CONSENT_CHANGE_EVENT = "rda:analytics-consent-change";
-const GA_MEASUREMENT_ID = "G-021Z217Z8C";
+const GA_MEASUREMENT_ID = analyticsConfig.measurementId;
 
 declare global {
   interface Window {

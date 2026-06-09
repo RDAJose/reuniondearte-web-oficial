@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
+import { analyticsConfig } from "@/lib/config/analytics";
 
 const CONSENT_STORAGE_KEY = "rda:analytics-consent";
 const CONSENT_CHANGE_EVENT = "rda:analytics-consent-change";
-const GA_MEASUREMENT_ID = "G-021Z217Z8C";
+const GA_MEASUREMENT_ID = analyticsConfig.measurementId;
 const GA_SCRIPT_ID = "google-analytics-gtag";
 const ACCEPTED = "accepted";
 const REJECTED = "rejected";
@@ -36,8 +37,12 @@ function isDevelopment() {
   return process.env.NODE_ENV !== "production";
 }
 
+function isDebugEnabled() {
+  return isDevelopment() || analyticsConfig.debug;
+}
+
 function logAnalytics(message: string, details?: Record<string, unknown>) {
-  if (!isDevelopment()) {
+  if (!isDebugEnabled()) {
     return;
   }
 
@@ -73,7 +78,7 @@ function getGoogleAnalyticsScript() {
 }
 
 function registerAnalyticsStatus() {
-  if (!isDevelopment()) {
+  if (!isDebugEnabled()) {
     return;
   }
 
