@@ -777,6 +777,107 @@ a {
   line-height: 1.7;
 }
 
+.author-profile-links {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  border-bottom: 1px solid rgba(24, 23, 19, 0.16);
+  padding-bottom: 1.25rem;
+}
+
+.author-profile-links h2 {
+  margin: 0;
+  color: #181713;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.author-profile-link,
+.authors-overview-card__link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(24, 23, 19, 0.2);
+  background: transparent;
+  padding: 0.52rem 0.72rem;
+  color: #181713;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.author-profile-link:hover,
+.author-profile-link:focus-visible,
+.authors-overview-card__link:hover,
+.authors-overview-card__link:focus-visible {
+  border-color: rgba(139, 36, 24, 0.46);
+  color: var(--accent);
+  outline: none;
+}
+
+.author-profile-link__icon,
+.authors-overview-card__icon {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+}
+
+.authors-overview {
+  margin-top: 3rem;
+}
+
+.authors-overview__grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.authors-overview-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: center;
+  border-top: 1px solid rgba(24, 23, 19, 0.18);
+  padding-top: 1rem;
+}
+
+.authors-overview-card__avatar {
+  width: 4.5rem;
+  height: 4.5rem;
+  font-size: 0.9rem;
+}
+
+.authors-overview-card__body {
+  min-width: 0;
+}
+
+.authors-overview-card h3 {
+  margin: 0;
+  color: #181713;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.18;
+}
+
+.authors-overview-card p {
+  margin: 0.35rem 0 0;
+  color: #625c51;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.authors-overview-card__actions {
+  grid-column: 2;
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
 .article-author-box__role {
   color: #38342d;
   font-weight: 700;

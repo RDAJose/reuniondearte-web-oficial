@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArticleAuthorAvatar } from "@/components/articles/ArticleAuthorAvatar";
 import { ArticleCard } from "@/components/articles/ArticleCard";
+import { AuthorProfileLinks } from "@/components/authors/AuthorProfileLinks";
 import {
   getArticleBySlug,
   getPublishedArticles,
@@ -39,6 +40,8 @@ export async function AuthorProfilePage({ author }: AuthorProfilePageProps) {
         </div>
       </section>
 
+      <AuthorProfileLinks author={author} />
+
       <section className="mt-12">
         <div className="section-heading">
           <p>Artículos publicados</p>
@@ -57,7 +60,7 @@ export async function AuthorProfilePage({ author }: AuthorProfilePageProps) {
           </div>
         ) : (
           <p className="border-t border-stone-300 pt-5 text-stone-600">
-            Todavía no hay artículos publicados.
+            Sus artículos aparecerán aquí cuando estén publicados.
           </p>
         )}
       </section>

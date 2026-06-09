@@ -4,6 +4,7 @@ export type ArticleAuthor = ArticleAuthorDetails & {
   avatarPath?: string;
   href: string;
   initials: string;
+  letterboxdUrl?: string;
   slug: string;
 };
 
@@ -28,6 +29,7 @@ const knownAuthors: ArticleAuthor[] = [
     bio: "Creador, desarrollador y editor de Reunión de Arte. Crítica cultural, cine, música y arte.",
     href: "/autores/jose-luis-olmedo",
     initials: "JO",
+    letterboxdUrl: "https://letterboxd.com/rdajose/",
     name: "José Luis Olmedo Barrionuevo",
     role: "Creador, desarrollador y editor de Reunión de Arte",
     slug: "jose-luis-olmedo",
@@ -37,6 +39,7 @@ const knownAuthors: ArticleAuthor[] = [
     avatarPath: localAvatarPathsBySlug["maria-garcia-santiago"],
     href: "/autores/maria-garcia-santiago",
     initials: "MG",
+    letterboxdUrl: "https://letterboxd.com/mariasantisima/",
     name: "María García Santiago",
     role: "Pintora, amante del arte y el cine, y editora en Reunión de Arte.",
     slug: "maria-garcia-santiago",
