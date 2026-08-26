@@ -6,6 +6,7 @@ export type ArticleAuthor = ArticleAuthorDetails & {
   initials: string;
   letterboxdUrl?: string;
   slug: string;
+  websiteUrl?: string;
 };
 
 type ArticleAuthorValue =
@@ -21,6 +22,7 @@ type ArticleAuthorValue =
 const localAvatarPathsBySlug: Record<string, string> = {
   "jose-luis-olmedo": "/authors/jose-luis-olmedo.jpg",
   "maria-garcia-santiago": "/authors/maria-garcia-santiago.jpg",
+  "francisco-manuel-luque-martinez": "/authors/francisco-manuel-luque-martinez.jpeg",
 };
 
 const knownAuthors: ArticleAuthor[] = [
@@ -43,6 +45,16 @@ const knownAuthors: ArticleAuthor[] = [
     name: "María García Santiago",
     role: "Pintora, amante del arte y el cine, y editora en Reunión de Arte.",
     slug: "maria-garcia-santiago",
+  },
+  {
+    avatarPath: localAvatarPathsBySlug["francisco-manuel-luque-martinez"],
+    bio: "Escritor y guionista nacido en Jaén y vinculado a Granada desde la infancia. Doctor en Farmacia por la Universidad de Granada, compagina su actividad en el ámbito sanitario con una trayectoria literaria iniciada en 2008. Su obra abarca el misterio, la fantasía, la literatura juvenil y el realismo emocional, y se extiende al cine y la música.",
+    href: "/autores/francisco-manuel-luque-martinez",
+    initials: "FM",
+    name: "Francisco Manuel Luque Martínez",
+    role: "Escritor, guionista y colaborador en Reunión de Arte",
+    slug: "francisco-manuel-luque-martinez",
+    websiteUrl: "https://franciscomluque.wixsite.com/escritor-francisco-m",
   },
 ];
 

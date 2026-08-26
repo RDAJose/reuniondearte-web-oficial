@@ -39,6 +39,16 @@ export function AuthorsOverview() {
                   <span>Letterboxd</span>
                 </a>
               ) : null}
+              {author.websiteUrl ? (
+                <a
+                  className="authors-overview-card__link"
+                  href={author.websiteUrl}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <span>Web oficial</span>
+                </a>
+              ) : null}
             </div>
           </article>
         ))}
