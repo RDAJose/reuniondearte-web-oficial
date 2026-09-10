@@ -1,0 +1,131 @@
+/* Scoped to the home page: archive and article styles remain independent. */
+.home {
+  background: var(--paper);
+}
+
+.intro :global(.editorial-kicker) {
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+}
+
+.lead,
+.leadTextOnly {
+  min-width: 0;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1.25rem;
+}
+
+.lead {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+}
+
+.leadBody {
+  min-width: 0;
+}
+
+.leadTitle {
+  font-size: clamp(1.85rem, 3.2vw, 2.5rem);
+  line-height: 1.12;
+  hyphens: none;
+}
+
+.leadExcerpt {
+  margin-top: 0.85rem;
+  color: #38342d;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.home :global(.article-card-media),
+.home :global(.article-lead-media) {
+  border: 0;
+  background: #f6f3ec;
+}
+
+.home :global(.article-card-media__img),
+.home :global(.article-lead-media__img) {
+  object-fit: contain;
+  padding: 0;
+}
+
+.secondary {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.secondary > article:first-child,
+.recent > article {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.secondary > article > div,
+.recent > article > div {
+  padding-top: 0.75rem;
+}
+
+.secondary h2 {
+  margin-top: 0.5rem;
+  font-size: 1.375rem;
+  line-height: 1.18;
+}
+
+.secondary p,
+.recent p {
+  margin-top: 0.5rem;
+  line-height: 1.55;
+}
+
+.recent > article:only-child {
+  grid-column: 1 / -1;
+  max-width: 38rem;
+}
+
+.home :global(.home-article-flow) {
+  gap: 1.5rem;
+}
+
+/* Small secondary images accompany the full text; no excerpts are clamped. */
+@media (min-width: 640px) {
+  .secondary > article:not(:first-child):has(> a) {
+    display: flow-root;
+  }
+
+  .secondary > article:not(:first-child) > a {
+    float: right;
+    width: 5rem;
+    margin: 0 0 0.5rem 0.75rem;
+  }
+
+  .secondary > article:not(:first-child) > div {
+    padding-top: 0;
+  }
+
+  .secondary > article:not(:first-child) h2 {
+    text-wrap: pretty;
+  }
+
+  .secondary > article:not(:first-child) h2 {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .lead {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .leadBody {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .leadMedia {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}

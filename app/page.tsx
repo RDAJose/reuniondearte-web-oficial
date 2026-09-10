@@ -5,6 +5,7 @@ import { NewsletterSignup } from "@/components/newsletter/NewsletterSignup";
 import { getPublishedArticles } from "@/lib/articles/articles";
 import { formatArticleDate } from "@/lib/articles/dates";
 import { getArticleImage, getArticleImageAlt } from "@/lib/articles/media";
+import styles from "./home.module.css";
 
 const featuredSections = [
   {
@@ -40,25 +41,25 @@ export default async function Home() {
   const leadDate = leadArticle ? formatArticleDate(leadArticle.publishedAt) : "";
 
   return (
-    <div className="bg-[#fffdf8]">
-      <section className="mx-auto max-w-6xl px-4 py-5 sm:px-5 sm:py-6">
+    <div className={styles.home}>
+      <section className="mx-auto max-w-6xl px-4 py-3 sm:px-5">
         <Link
           href="/"
-          className="group block border-y border-stone-900 py-3.5 text-center no-underline transition-colors duration-200 hover:border-stone-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8b2418] sm:py-4"
+          className={`${styles.intro} block border-y border-stone-900 py-2 text-center no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8b2418]`}
           aria-label="Ir a la portada de Reunión de Arte"
         >
           <p className="editorial-kicker">Revista cultural independiente</p>
-          <h1 className="article-card-title mt-2 font-serif text-[2.35rem] font-bold leading-none text-stone-950 transition-colors duration-200 group-hover:text-[#8b2418] sm:text-5xl">
+          <h1 className="article-card-title mt-1 font-serif text-2xl font-bold leading-tight text-stone-950 sm:text-3xl">
             Reunión de Arte
           </h1>
-          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-stone-600">
+          <p className="mx-auto mt-1 max-w-2xl text-sm leading-5 text-stone-600">
             Cine, música, arte y libros con mirada crítica, archivo cuidado y
             lectura clara en móvil y escritorio.
           </p>
         </Link>
       </section>
 
-      <section className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 px-4 pb-10 sm:px-5 lg:grid-cols-[minmax(0,1.7fr)_minmax(16rem,0.8fr)]">
+      <section className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 px-4 pb-7 sm:px-5 lg:grid-cols-[minmax(0,1.8fr)_minmax(16rem,0.8fr)]">
         <div className="min-w-0">
           <div className="section-heading">
             <p>Portada</p>
@@ -68,14 +69,14 @@ export default async function Home() {
             <article
               className={
                 leadImage
-                  ? "grid min-w-0 grid-cols-1 gap-6 border-b border-stone-300 pb-8 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]"
-                  : "border-b border-stone-300 pb-8"
+                  ? styles.lead
+                  : styles.leadTextOnly
               }
             >
               {leadImage ? (
                 <Link
                   href={`/articulos/${leadArticle.slug}`}
-                  className="article-lead-media relative aspect-[4/3] w-full min-w-0 overflow-hidden md:order-2"
+                  className={`article-lead-media ${styles.leadMedia} relative aspect-[4/3] w-full min-w-0 overflow-hidden`}
                   aria-label={leadArticle.title}
                 >
                   <Image
@@ -89,9 +90,9 @@ export default async function Home() {
                 </Link>
               ) : null}
 
-              <div className="min-w-0 md:order-1">
+              <div className={styles.leadBody}>
                 <p className="editorial-kicker">{leadArticle.category}</p>
-                <h2 className="article-card-title mt-3 font-serif text-2xl font-bold leading-[1.12] text-stone-950 sm:text-5xl">
+                <h2 className={`article-card-title ${styles.leadTitle} mt-2 font-serif font-bold text-stone-950`}>
                   <Link
                     href={`/articulos/${leadArticle.slug}`}
                     className="underline-offset-4 hover:underline"
@@ -100,13 +101,13 @@ export default async function Home() {
                   </Link>
                 </h2>
                 {leadArticle.excerpt ? (
-                  <p className="mt-5 text-lg leading-8 text-stone-700">
+                  <p className={styles.leadExcerpt}>
                     {leadArticle.excerpt}
                   </p>
                 ) : null}
                 {leadDate ? (
                   <time
-                    className="mt-5 block text-sm font-medium uppercase tracking-[0.04em] text-stone-500"
+                    className="mt-3 block text-xs font-medium uppercase tracking-[0.04em] text-stone-600"
                     dateTime={leadArticle.publishedAt}
                   >
                     {leadDate}
@@ -127,13 +128,13 @@ export default async function Home() {
           )}
 
           {recentArticles.length > 0 ? (
-            <section className="mt-8" aria-labelledby="home-recent-title">
+            <section className="mt-5" aria-labelledby="home-recent-title">
               <div className="section-heading">
                 <h2 id="home-recent-title">Más recientes</h2>
                 <Link href="/articulos">Ver archivo</Link>
               </div>
 
-              <div className="grid min-w-0 gap-6 sm:grid-cols-2">
+              <div className={`${styles.recent} grid min-w-0 gap-5 sm:grid-cols-2`}>
                 {recentArticles.map((article) => (
                   <ArticleCard key={article.slug} article={article} variant="compact" />
                 ))}
@@ -146,7 +147,7 @@ export default async function Home() {
           <div className="section-heading">
             <p>Destacados</p>
           </div>
-          <div className="space-y-6">
+          <div className={styles.secondary}>
             {secondaryArticles.length > 0 ? (
               secondaryArticles.map((article) => (
                 <ArticleCard key={article.slug} article={article} variant="compact" />
@@ -170,12 +171,12 @@ export default async function Home() {
       </section>
 
       <section className="border-y border-stone-300 bg-[#f6f3ec]">
-        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-px px-4 py-8 sm:px-5 md:grid-cols-4">
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-px px-4 py-4 sm:px-5 md:grid-cols-4">
           {featuredSections.map((section) => (
             <Link
               key={section.href}
               href={section.href}
-              className="border-t border-stone-300 py-5 md:border-l md:border-t-0 md:px-5"
+              className="border-t border-stone-300 py-3 md:border-l md:border-t-0 md:px-5"
             >
               <h2 className="font-serif text-2xl font-bold text-stone-950">
                 {section.title}
@@ -188,12 +189,12 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-5 sm:py-12">
+      <section className="mx-auto max-w-6xl px-4 py-7 sm:px-5">
         <NewsletterSignup />
       </section>
 
       {articleFeed.length > 0 ? (
-        <section className="mx-auto max-w-6xl px-4 py-10 sm:px-5 sm:py-12">
+        <section className="mx-auto max-w-6xl px-4 pb-8 pt-3 sm:px-5">
           <div className="section-heading">
             <p>Últimas publicaciones</p>
             <Link href="/articulos">Todo el archivo</Link>
