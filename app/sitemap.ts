@@ -5,6 +5,7 @@ import { publicAuthors } from "@/lib/articles/author";
 import { officialArticleSlugFallbacks } from "@/lib/articles/static-routes";
 import type { Article } from "@/lib/articles/types";
 import { siteConfig } from "@/lib/config/site";
+import { getPublishedSets } from "@/lib/sets/api";
 
 function url(path: string) {
   return new URL(path, siteConfig.url).toString();
@@ -25,6 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     "",
     "/articulos/",
+    "/sets/",
     "/categorias/",
     "/sobre/",
     "/contacto/",
@@ -51,7 +53,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
   }));
 
-  return [...staticRoutes, ...categoryRoutes, ...articleRoutes, ...authorRoutes];
+  const setRoutes: MetadataRoute.Sitemap = (await getPublishedSets()).map((item) => ({
+    url: url(`/sets/${item.id}/`), lastModified: new Date(item.updatedAt),
+  }));
+  return [...staticRoutes, ...categoryRoutes, ...articleRoutes, ...authorRoutes, ...setRoutes];
 }
 
 export const dynamic = "force-static";

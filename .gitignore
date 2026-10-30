@@ -1,6 +1,14 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
+# Original audio is served from the API storage/R2, never from Git.
+*.[mM][pP]3
+*.[wW][aA][vV]
+*.[fF][lL][aA][cC]
+*.[mM]4[aA]
+*.[aA][aA][cC]
+*.[oO][gG][gG]
+*.[aA][iI][fF]*
 /node_modules
 /.pnp
 .pnp.*

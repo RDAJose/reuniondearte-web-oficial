@@ -8,6 +8,7 @@
   navItems: [
     { href: "/", label: "Inicio" },
     { href: "/articulos", label: "Artículos" },
+    { href: "/sets", label: "SETS" },
     { href: "/categorias", label: "Categorías" },
     { href: "/sobre", label: "Sobre" },
     { href: "/contacto", label: "Contacto" },
