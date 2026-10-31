@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SetsCatalog } from "@/components/sets/SetsCatalog";
 import { getPublishedSets, getSetsApiBaseUrl } from "@/lib/sets/api";
 import { siteConfig } from "@/lib/config/site";
+import { mixExcerpt } from "@/lib/sets/editorial";
 
 type Props = { params: Promise<{ id: string }> };
 export const dynamic = "force-static";
@@ -25,7 +26,7 @@ async function findSet(params: Props["params"]) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const item = await findSet(params);
   const title = `${item.title} · ${item.artist}`;
-  const description = item.description.replace(/\s+/g, " ").slice(0, 170);
+  const description = mixExcerpt(item.description, 170);
   return {
     title, description, alternates: { canonical: `/sets/${item.id}/` },
     openGraph: { title, description, url: `/sets/${item.id}/`, siteName: siteConfig.name, locale: "es_ES",
@@ -37,5 +38,5 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function SetPage({ params }: Props) {
   const item = await findSet(params);
   return <SetsCatalog apiBaseUrl={getSetsApiBaseUrl()} initialPage={{ items: [item], nextCursor: null }}
-    archive={[{ id: item.id, title: item.title, artist: item.artist }]} detailId={item.id} />;
+    archive={(await getPublishedSets()).map(({ id, title, artist }) => ({ id, title, artist }))} detailId={item.id} />;
 }

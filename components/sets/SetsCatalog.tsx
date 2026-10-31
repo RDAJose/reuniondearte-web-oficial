@@ -5,6 +5,9 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { formatSetDate, isMusicSet, isSetPage, type MusicSet, type SetPage } from "@/lib/sets/contracts";
 import { parseTracklist } from "@/lib/sets/tracklist";
+import { mixExcerpt } from "@/lib/sets/editorial";
+import { mergeMixes, refreshedSelection, remainingMixes } from "@/lib/sets/catalog";
+import { MixText } from "./MixText";
 import styles from "./sets.module.css";
 
 function time(seconds: number) {
@@ -22,7 +25,7 @@ type Props = {
 };
 
 export function SetsCatalog({ apiBaseUrl, initialPage, archive, detailId }: Props) {
-  const initialActive = detailId ? initialPage.items[0] ?? null : null;
+  const initialActive = initialPage.items[0] ?? null;
   const [items, setItems] = useState<MusicSet[]>(initialPage.items);
   const [nextCursor, setNextCursor] = useState<number | null>(initialPage.nextCursor);
   const [loading, setLoading] = useState(false);
@@ -39,12 +42,20 @@ export function SetsCatalog({ apiBaseUrl, initialPage, archive, detailId }: Prop
   const requestRef = useRef<AbortController | null>(null);
   const playAttempt = useRef(0);
   const pendingSeek = useRef<number | null>(null);
+  const hasStarted = useRef(false);
+  const failedCursor = useRef<number | null>(null);
+  const playButtonRef = useRef<HTMLButtonElement>(null);
   const staticIds = useMemo(() => new Set(archive.map((item) => item.id)), [archive]);
-  const tracks = useMemo(() => parseTracklist(active?.tracklist ?? ""), [active?.tracklist]);
+  const featured = active;
+  const catalogItems = remainingMixes(items, featured?.id);
+  const detail = detailId ? items[0] : null;
+  const otherMixes = archive.filter((item) => item.id !== detailId);
+  const tracks = useMemo(() => parseTracklist(featured?.tracklist ?? ""), [featured?.tracklist]);
 
   const load = useCallback((cursor: number | null = null) => {
     requestRef.current?.abort();
     const controller = new AbortController(); requestRef.current = controller;
+    failedCursor.current = cursor;
     const timeout = window.setTimeout(() => controller.abort(), 25000);
     const path = detailId ? `/api/sets/${detailId}` : `/api/sets?limit=12${cursor ? `&before=${cursor}` : ""}`;
     void fetch(`${apiBaseUrl}${path}`, {
@@ -66,13 +77,15 @@ export function SetsCatalog({ apiBaseUrl, initialPage, archive, detailId }: Prop
         activeRef.current = null; setActive(null); setItems([]); setUnavailable(true);
         return;
       }
-      if (detailId && !audioRef.current?.getAttribute("src")) {
-        activeRef.current = data.items[0]; setActive(data.items[0]);
+      if (cursor === null) {
+        const selection = refreshedSelection(activeRef.current, data.items, hasStarted.current);
+        activeRef.current = selection; setActive(selection);
       }
-      setItems((previous) => cursor ? [...new Map([...previous, ...data.items].map((item) => [item.id, item])).values()] : data.items);
+      setUnavailable(false); setCatalogError("");
+      setItems((previous) => cursor ? mergeMixes(previous, data.items) : data.items);
       setNextCursor(data.nextCursor);
     }).catch(() => {
-      if (requestRef.current === controller) setCatalogError("No hemos podido actualizar las sesiones. Se conserva la edición disponible; puedes volver a intentarlo.");
+      if (requestRef.current === controller) setCatalogError("No hemos podido actualizar los mixes. Se conserva la edición disponible; puedes volver a intentarlo.");
     }).finally(() => {
       window.clearTimeout(timeout);
       if (requestRef.current === controller) setLoading(false);
@@ -88,6 +101,15 @@ export function SetsCatalog({ apiBaseUrl, initialPage, archive, detailId }: Prop
     void load();
     return () => { requestRef.current?.abort(); requestRef.current = null; };
   }, [load]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || audio.getAttribute("src") === (active?.audioUrl ?? null)) return;
+    // Metadata only: duration is available before play; the browser can request byte ranges.
+    if (active?.audioUrl) audio.src = active.audioUrl;
+    else audio.removeAttribute("src");
+    audio.load();
+  }, [active?.audioUrl]);
 
   const updatePosition = useCallback(() => {
     const audio = audioRef.current;
@@ -111,6 +133,7 @@ export function SetsCatalog({ apiBaseUrl, initialPage, archive, detailId }: Prop
   const play = useCallback(() => {
     const audio = audioRef.current;
     if (!audio || !activeRef.current) return;
+    hasStarted.current = true;
     const attempt = ++playAttempt.current;
     setPlayerError("");
     if (!audio.getAttribute("src")) { audio.src = activeRef.current.audioUrl; audio.load(); }
@@ -161,7 +184,7 @@ export function SetsCatalog({ apiBaseUrl, initialPage, archive, detailId }: Prop
     if (!active || !("mediaSession" in navigator)) return;
     const session = navigator.mediaSession;
     if (typeof MediaMetadata !== "undefined") session.metadata = new MediaMetadata({
-      title: active.title, artist: active.artist, album: "SETS · Reunión de Arte",
+      title: active.title, artist: active.artist, album: "Mixes · Reunión de Arte",
       artwork: [{ src: active.coverUrl }],
     });
     const actions: [MediaSessionAction, MediaSessionActionHandler][] = [
@@ -192,74 +215,100 @@ export function SetsCatalog({ apiBaseUrl, initialPage, archive, detailId }: Prop
   return (
     <div className={styles.page}>
       <header className={styles.intro}>
-        {detailId && <Link href="/sets/" prefetch={false} className={styles.back}>← Todas las sesiones</Link>}
+        {detailId && <Link href="/sets/" prefetch={false} className={styles.back}>← Todos los mixes</Link>}
         <p className="editorial-kicker">Reunión de Arte · Archivo sonoro</p>
-        {detailId ? <><h1 className={styles.detailTitle}>{initialActive?.title}</h1><p className={styles.lead}>{initialActive?.artist}</p></>
-          : <><h1>SETS<span aria-hidden="true">.</span></h1><p className={styles.lead}>Música para quedarse.</p>
-            <p className={styles.description}>Sesiones y selecciones para escuchar con tiempo. Un recorrido, de principio a fin.</p></>}
+        {detailId ? <><h1>{detail?.title ?? initialActive?.title}</h1><p className={styles.author}>{detail?.artist ?? initialActive?.artist}</p>
+          {detail && <p className={styles.metadata}>{detail.sessionDate && <time dateTime={detail.sessionDate}>{formatSetDate(detail.sessionDate)}</time>}{detail.sessionDate && detail.genre ? " · " : ""}{detail.genre}</p>}</>
+          : <><h1>Mixes<span aria-hidden="true">.</span></h1><p className={styles.lead}>Música para quedarse.</p></>}
       </header>
 
-      {unavailable && <p role="status" className={styles.notice}>Esta sesión ya no está disponible en el catálogo.</p>}
+      {unavailable && <p role="status" className={styles.notice}>Este mix ya no está disponible en el catálogo.</p>}
 
-      <section className={styles.player} aria-label="Reproductor de sesiones">
-        <div className={styles.playerArtwork}>
-          {active ? <Image src={active.coverUrl} alt="" width={160} height={160} unoptimized /> : <span aria-hidden="true">R/A<br />SETS</span>}
-        </div>
+      {featured && <section className={`${styles.player} ${detailId ? styles.detailPlayer : ""}`} aria-label="Reproductor de mixes">
+        <figure className={styles.playerArtwork}>
+          <Image src={featured.coverUrl} alt={featured.coverAlt} width={600} height={600} unoptimized loading="eager" />
+          {featured.coverCredit && <figcaption>{featured.coverCredit}</figcaption>}
+        </figure>
         <div className={styles.playerBody}>
-          <p className="editorial-kicker">{active ? "En el reproductor" : "A la escucha"}</p>
-          <h2>{active?.title ?? "Elige una sesión"}</h2>
-          <p className={styles.artist}>{active?.artist ?? "El sonido empieza cuando tú quieras."}</p>
+          <p className="editorial-kicker">{detailId ? "Escucha el mix" : "A la escucha"}</p>
+          {!detailId && <>
+            <h2>{staticIds.has(featured.id) ? <Link href={`/sets/${featured.id}/`} prefetch={false}>{featured.title}</Link> : featured.title}</h2>
+            <p className={styles.author}>{featured.artist}</p>
+            <p className={styles.metadata}>{featured.sessionDate && <time dateTime={featured.sessionDate}>{formatSetDate(featured.sessionDate)}</time>}{featured.sessionDate && featured.genre ? " · " : ""}{featured.genre}</p>
+            <p className={styles.description}>{mixExcerpt(featured.description, 220)}</p>
+          </>}
           <div className={styles.controls}>
             <button type="button" disabled={!active || !duration} aria-label="Retroceder 15 segundos" onClick={() => seek(position - 15)}>−15 s</button>
-            <button type="button" className={styles.play} disabled={!active} aria-label={playing ? "Pausar sesión" : "Reproducir sesión"} onClick={() => { if (audioRef.current?.paused) play(); else audioRef.current?.pause(); }}>
-              <span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span> {playing ? "Pausa" : "Play"}
+            <button ref={playButtonRef} type="button" className={styles.play} aria-label={playing ? "Pausar mix" : "Reproducir mix"} onClick={() => choose(featured)}>
+              <span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span> {playing ? "Pausar" : "Escuchar"}
             </button>
             <button type="button" disabled={!active || !duration} aria-label="Avanzar 15 segundos" onClick={() => seek(position + 15)}>+15 s</button>
           </div>
           <label className={styles.srOnly} htmlFor="sets-position">Posición de reproducción</label>
-          <input id="sets-position" className={styles.timeline} type="range" min="0" max={duration || 1} step="1" value={Math.min(position, duration || 0)} disabled={!duration} aria-valuetext={`${time(position)} de ${time(duration)}`} onChange={(event) => seek(Number(event.target.value))} />
-          <div className={styles.times}><span>{time(position)}</span><span>{time(duration)}</span></div>
-          <p className={styles.playerStatus} role="status">{playerError || (buffering ? "Cargando audio…" : playing ? "Reproduciendo" : active ? "En pausa" : "Sin reproducción automática")}</p>
+          <input id="sets-position" className={styles.timeline} type="range" min="0" max={duration || 1} step="1" value={Math.min(position, duration || 0)} disabled={!duration} aria-valuetext={duration ? `${time(position)} de ${time(duration)}` : "Duración pendiente de cargar"} onChange={(event) => seek(Number(event.target.value))} />
+          <div className={styles.times}><span>{time(position)}</span><span aria-label={duration ? `Duración total ${time(duration)}` : "Duración pendiente de cargar"}>{duration ? time(duration) : "—:—"}</span></div>
+          <p className={styles.playerStatus} role="status">{playerError || (buffering ? "Cargando audio…" : playing ? "Reproduciendo" : position > 0 ? "En pausa" : "Listo para escuchar")}</p>
+          {!detailId && <div className={styles.mixNotes}>
+            {staticIds.has(featured.id) && <Link href={`/sets/${featured.id}/`} prefetch={false}>Sobre este mix y tracklist →</Link>}
+            <details className={styles.credits}><summary>Créditos y formato</summary><MixText>{featured.credits}</MixText><p>Audio original · {featured.audioMimeType.replace("audio/", "").toUpperCase()}</p></details>
+          </div>}
         </div>
-        <audio ref={audioRef} preload="none" onTimeUpdate={updatePosition} onLoadedMetadata={metadataLoaded} onDurationChange={updatePosition} onSeeked={() => { setBuffering(false); updatePosition(); }}
+      </section>}
+      <audio ref={audioRef} preload="metadata" onEmptied={() => { setPosition(0); setDuration(0); }} onTimeUpdate={updatePosition} onLoadedMetadata={metadataLoaded} onDurationChange={updatePosition} onSeeked={() => { setBuffering(false); updatePosition(); }}
           onPlay={() => setPlaying(true)} onPlaying={() => { setPlaying(true); setBuffering(false); }}
           onPause={() => { setPlaying(false); setBuffering(false); }} onWaiting={() => setBuffering(true)}
           onEnded={() => { setPlaying(false); setBuffering(false); updatePosition(); }}
           onError={() => { if (activeRef.current) { setPlaying(false); setBuffering(false); setPlayerError("Este audio no está disponible o el navegador no admite su formato original. Inténtalo de nuevo más tarde o en otro navegador."); } }} />
-      </section>
 
-      {active && tracks.length > 0 && <section className={styles.tracklist} aria-labelledby="tracklist-title">
-        <h2 id="tracklist-title">Tracklist · {active.title}</h2>
+      {featured && detailId && tracks.length > 0 && <section className={styles.tracklist} aria-labelledby="tracklist-title">
+        <h2 id="tracklist-title">Tracklist</h2>
         <ol>{tracks.map((track, index) => <li key={index}>
           {track.seconds !== null && track.timestamp !== null
             ? <><button type="button" disabled={duration > 0 && track.seconds >= duration}
               aria-label={`Reproducir desde ${track.timestamp}: ${track.text}`}
-              onClick={() => choose(active, track.seconds ?? 0)}>{track.timestamp}</button><span>{track.text}</span></>
+              onClick={() => choose(featured, track.seconds ?? 0)}>{track.timestamp}</button><span>{track.text}</span></>
             : <span>{track.text}</span>}
         </li>)}</ol>
       </section>}
 
-      <section aria-labelledby="sets-catalog-title" className={styles.catalog}>
-        <div className="section-heading"><h2 id="sets-catalog-title">{detailId ? "Sobre esta sesión" : "Las sesiones"}</h2><span className={styles.caption}>Selección de Reunión de Arte</span></div>
-        {loading && !items.length && <p role="status" className={styles.notice}>Cargando sesiones…</p>}
-        {!detailId && !loading && !catalogError && !items.length && <div className={styles.empty}><h3>El archivo está por sonar.</h3><p>Las próximas sesiones aparecerán aquí.</p></div>}
-        <div className={detailId ? styles.detailGrid : styles.grid}>
-          {items.map((item) => (
+      {detail && <section aria-labelledby="about-mix-title" className={styles.catalog}>
+        <div className={styles.sectionHeading}><h2 id="about-mix-title">Sobre este mix</h2></div>
+        <div className={styles.aboutGrid}>
+          <div className={styles.aboutBody}>
+            <MixText>{detail.description}</MixText>
+            <details className={styles.credits}><summary>Créditos y formato</summary><MixText>{detail.credits}</MixText><p>Audio original · {detail.audioMimeType.replace("audio/", "").toUpperCase()}</p></details>
+          </div>
+        </div>
+      </section>}
+
+      {((!detailId && (catalogItems.length > 0 || !items.length || nextCursor !== null)) || catalogError || loading) && <section aria-label={catalogItems.length ? undefined : "Estado del catálogo"} aria-labelledby={!detailId && catalogItems.length ? "sets-catalog-title" : undefined} className={styles.catalog}>
+        {!detailId && catalogItems.length > 0 && <div className={styles.sectionHeading}><h2 id="sets-catalog-title">Más mixes</h2><span className={styles.caption}>Selección de Reunión de Arte</span></div>}
+        {loading && !items.length && <p role="status" className={styles.notice}>Cargando mixes…</p>}
+        {!detailId && !loading && !catalogError && !items.length && <div className={styles.empty}><h3>El archivo está por sonar.</h3><p>Los próximos mixes aparecerán aquí.</p></div>}
+        {!detailId && <div className={styles.grid}>
+          {catalogItems.map((item) => (
             <article key={item.id} className={styles.card}>
               <div className={styles.cover}><Image src={item.coverUrl} alt={item.coverAlt} width={600} height={600} unoptimized loading="lazy" sizes="(max-width: 700px) 100vw, 33vw" /></div>
-              <p className={styles.caption}>SET {String(item.id).padStart(2, "0")} · {item.artist}</p>
-              <h3>{!detailId && staticIds.has(item.id) ? <Link href={`/sets/${item.id}/`} prefetch={false}>{item.title}</Link> : item.title}</h3>
-              <p className={styles.caption}>{item.sessionDate && <time dateTime={item.sessionDate}>{formatSetDate(item.sessionDate)}</time>}{item.sessionDate && item.genre ? " · " : ""}{item.genre}</p>
-              <p className={styles.sessionDescription}>{item.description}</p>
-              <button type="button" aria-label={`${active?.id === item.id && playing ? "Pausar" : "Escuchar"} ${item.title}`} aria-pressed={active?.id === item.id && playing} onClick={() => choose(item)}>{active?.id === item.id && playing ? "Ⅱ Pausar" : "▶ Escuchar sesión"}</button>
-              <details className={styles.credits}><summary>Créditos y formato</summary><p>{item.credits}</p><p>Portada: {item.coverCredit}</p><p>Audio original · {item.audioMimeType.replace("audio/", "").toUpperCase()}</p></details>
+              <div className={styles.cardBody}>
+              <p className={styles.caption}>Mix {String(item.id).padStart(2, "0")}</p>
+              <h3>{staticIds.has(item.id) ? <Link href={`/sets/${item.id}/`} prefetch={false}>{item.title}</Link> : item.title}</h3>
+              <p className={styles.artist}>{item.artist}</p>
+              <p className={styles.metadata}>{item.sessionDate && <time dateTime={item.sessionDate}>{formatSetDate(item.sessionDate)}</time>}{item.sessionDate && item.genre ? " · " : ""}{item.genre}</p>
+              <p className={styles.description}>{mixExcerpt(item.description)}</p>
+              <button type="button" aria-label={`Escuchar ${item.title}`} onClick={() => { choose(item); playButtonRef.current?.focus(); }}>▶ Escuchar mix</button>
+              <details className={styles.credits}><summary>Créditos y formato</summary><MixText>{item.credits}</MixText><p>Portada: {item.coverCredit}</p><p>Audio original · {item.audioMimeType.replace("audio/", "").toUpperCase()}</p></details>
+              </div>
             </article>
           ))}
-        </div>
-        {catalogError && <div className={styles.notice} role="alert"><p>{catalogError}</p><button type="button" disabled={loading} onClick={() => requestPage(items.length ? nextCursor : null)}>Volver a intentar</button></div>}
-        {nextCursor !== null && !catalogError && <button type="button" className={styles.more} disabled={loading} onClick={() => requestPage(nextCursor)}>{loading ? "Cargando…" : "Más sesiones"}</button>}
-      </section>
-      {!detailId && archive.length > 12 && <nav className={styles.archive} aria-label="Archivo completo de sesiones">
+        </div>}
+        {catalogError && <div className={styles.notice} role="alert"><p>{catalogError}</p><button type="button" disabled={loading} onClick={() => requestPage(failedCursor.current)}>Volver a intentar</button></div>}
+        {nextCursor !== null && !catalogError && <button type="button" className={styles.more} disabled={loading} onClick={() => requestPage(nextCursor)}>{loading ? "Cargando…" : "Más mixes"}</button>}
+      </section>}
+      {detailId && otherMixes.length > 0 && <nav className={styles.archive} aria-labelledby="other-mixes-title">
+        <div className={styles.sectionHeading}><h2 id="other-mixes-title">Otros mixes</h2></div>
+        <ul>{otherMixes.map((item) => <li key={item.id}><Link href={`/sets/${item.id}/`} prefetch={false}>{item.title}<span>{item.artist}</span></Link></li>)}</ul>
+      </nav>}
+      {!detailId && archive.length > 12 && <nav className={styles.archive} aria-label="Archivo completo de mixes">
         <h2>Archivo completo</h2><ul>{archive.map((item) => <li key={item.id}><Link href={`/sets/${item.id}/`} prefetch={false}>{item.title} · {item.artist}</Link></li>)}</ul>
       </nav>}
       <noscript>Estás viendo la edición publicada. Activa JavaScript para utilizar el reproductor y consultar las últimas actualizaciones.</noscript>

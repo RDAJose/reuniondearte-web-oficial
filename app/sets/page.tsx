@@ -7,14 +7,14 @@ import { siteConfig } from "@/lib/config/site";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "SETS",
+  title: "Mixes",
   description: "Sesiones musicales de Reunión de Arte. Selecciones para escuchar con tiempo, de principio a fin.",
   alternates: { canonical: "/sets/" },
   openGraph: {
-    title: "SETS · Reunión de Arte", description: "Sesiones musicales, DJs y selecciones de Reunión de Arte.",
+    title: "Mixes · Reunión de Arte", description: "Sesiones musicales, DJs y selecciones de Reunión de Arte.",
     url: "/sets/", siteName: siteConfig.name, locale: "es_ES", type: "website",
   },
-  twitter: { card: "summary", title: "SETS · Reunión de Arte", description: "Sesiones musicales, DJs y selecciones de Reunión de Arte." },
+  twitter: { card: "summary", title: "Mixes · Reunión de Arte", description: "Sesiones musicales, DJs y selecciones de Reunión de Arte." },
 };
 
 export default async function SetsPage() {
